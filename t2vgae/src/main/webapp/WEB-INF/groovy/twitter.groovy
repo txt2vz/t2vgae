@@ -22,7 +22,7 @@ def twCount =0;
 //def builder = new groovy.xml.MarkupBuilder(out)
 
 List<Status> tweets = []//for (x=0;x<5;x++) {
-for (;;) {
+for   (i in 0..5){//(;;) {
 	result = twitter.search(query);
 	tweets.addAll(result.getTweets())
 	query = result.nextQuery()
@@ -46,7 +46,7 @@ tweets.each {
 	txtout  = txtout + txt;//          << txt ?: " "
 	//	def plc = it.getPlace()?.getFullName()
 
-	//	txtout=	 txt.replaceAll('[^A-Za-z0-9 %@#$£{}+*\'-_]', " ");
+	//	txtout=	 txt.replaceAll('[^A-Za-z0-9 %@#${}+*\'-_]', " ");
 	//	txtout = txtout.replaceAll(",", "");
 	//p  << uname + "," + lat + "," + lng + "," + txtout + "\n"
 }

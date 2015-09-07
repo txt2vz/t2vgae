@@ -28,7 +28,7 @@ repositories {
 
 appcfg {
 	
-		email = '****@gmail.com'
+		email = '@gmail.com'
 		password = '**'
 	
 		app { id = 'txt2vz'
@@ -54,7 +54,7 @@ dependencies {
 
     compile 'org.gaelyk:gaelyk:2.1.2'
 	
-	compile 'org.twitter4j:twitter4j-core:4.0.2'
+	compile 'org.twitter4j:twitter4j-core:4.0.4'
 	compile 'org.jsoup:jsoup:1.7.3'
 
     testCompile 'org.gaelyk:gaelyk-spock:0.4'
