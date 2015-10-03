@@ -28,11 +28,11 @@ repositories {
 
 appcfg {
 	
-		email = '@gmail.com'
+		email = '**'
 		password = '**'
 	
 		app { id = 'txt2vz'
-			  version =13
+			  version =14
 		}
 	
 		logs {
@@ -43,7 +43,7 @@ appcfg {
 
 dependencies {
     def gaeVersion = '1.9.19'
-    def groovyVersion = '2.4.3'
+    def groovyVersion = '2.4.5'
 
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 

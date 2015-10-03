@@ -2,7 +2,7 @@
 
 body, html {
     margin:0;
-    padding;
+
     height:100%
 }
 
@@ -44,5 +44,5 @@ a {
 
 #results {
     font-size:1.25em;
-    color:red
+    color:red;
 }
