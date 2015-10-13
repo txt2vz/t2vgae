@@ -18,6 +18,7 @@
 
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="js/colorbrewer.js" type="text/javascript"></script>
 
     <script>
         function openModal() {
@@ -62,7 +63,8 @@
 
                     if (jsonlinks == null || typeof jsonlinks == 'object') {
                         linksobj = jsonlinks;
-                    } else linksobj = JSON.parse(jsonlinks);
+                    } else
+                        linksobj = JSON.parse(jsonlinks);
 
                     //	var linksobj = jsonlinks; // JSON.parse(jsonlinks);
                     var links = linksobj.links;
@@ -70,8 +72,8 @@
 
                     var w = 960,
                             h = 500;
-                    var svg = d3.select(".main").append("svg").attr("width",
-                            w).attr("height", h);
+                    var svg = d3.select(".main").append("svg").attr(
+                            "width", w).attr("height", h);
 
                     // Compute the distinct nodes from the links.
                     links.forEach(function(link) {
@@ -95,81 +97,113 @@
                         nodes[tg].totalCooc += link.cooc;
                     });
 
-
-                    var force = d3.layout.force().gravity(.05)
-                            .charge(-200).size([w, h]);
+                    var force = d3.layout.force().gravity(.05).charge(-200)
+                            .size([w, h]);
 
                     var linkCoocExtent = d3.extent(links, function(d) {
                         return d.cooc
                     });
 
                     force.nodes(d3.values(nodes)).links(links)
-                            .linkDistance(function(d) {
+                            .linkDistance(
+                            function(d) {
 
-                                var distanceScale = d3.scale.linear().domain(linkCoocExtent).range([180, 80]);
+                                var distanceScale = d3.scale
+                                        .linear().domain(
+                                        linkCoocExtent)
+                                        .range([180, 80]);
                                 return distanceScale(d.cooc);
 
                             }).start();
 
                     //  console.log(" links cooc extent " + linkCoocExtent);
                     var link = svg.selectAll(".link").data(links).enter()
-                            .append("line").attr("stroke-width",
+                            .append("line").attr(
+                            "stroke-width",
                             function(d) {
 
-                                var linkWidthScale = d3.scale.linear().domain(linkCoocExtent).range([0.1, 3]);
+                                var linkWidthScale = d3.scale
+                                        .linear().domain(
+                                        linkCoocExtent)
+                                        .range([0.1, 3]);
                                 return linkWidthScale(d.cooc);
 
                             }).attr("class", "link");
 
-
-                    var nodeTotalCoocExtent = d3.extent(d3.values(nodes), function(d) {
-                        return d.totalCooc
-                    });
+                    var totalCoocArray = [];
+                    var nodeTotalCoocExtent = d3.extent(d3.values(nodes),
+                            function(d) {
+                                totalCoocArray.push(d.totalCooc);
+                                return d.totalCooc
+                            });
 
                     var node = svg.selectAll(".node")
                             .data(d3.values(nodes)).enter().append("g")
                             .attr("class", "node").call(force.drag);
 
-                    var fontScale = d3.scale.linear().domain(nodeTotalCoocExtent).range([8, 20]);
+                    var fontScale = d3.scale.linear().domain(
+                            nodeTotalCoocExtent).range([8, 20]);
 
-                    node.append("rect").attr("width", function(d) {
+                    node
+                            .append("rect")
+                            .attr(
+                            "width",
+                            function(d) {
 
-                        return d.name.length * (fontScale(d.totalCooc) / 2) + 20; //k10;
-
-                    }).attr("height", function(d) {
-                        return 20;
-                    }).attr("ry", 8)
+                                return d.name.length * (fontScale(d.totalCooc) / 2) + 20;
+                            })
+                            .attr("height", function(d) {
+                                return 20;
+                            })
+                            .attr("ry", 8)
                             .attr("rx", 8)
                             .attr("y", -15)
                             .attr("x", -5)
 
-                            .attr("opacity", function(d) {
-
-                                var opacityScale = d3.scale.linear().domain(nodeTotalCoocExtent).range([0.05, 1]);
+                            .attr(
+                            "opacity",
+                            function(d) {
+                                var opacityScale = d3.scale
+                                        .linear()
+                                        .domain(nodeTotalCoocExtent)
+                                        .range([0.4, 0.7]);
                                 var opacityValue = opacityScale(d.totalCooc);
-                                //  console.log("TotalCooc" + d.totalCooc + " opacityValue " + opacityValue);
                                 return opacityValue;
-
                             })
-                            .attr("fill", function(d) {
+                            .attr(
+                            "fill",
+                            function(d) {
 
-                                var colorScale = d3.scale.quantize().domain(nodeTotalCoocExtent).range(["cyan", "blueviolet", "magenta"]);
+                                var colorScale = d3.scale
+                                        .quantile()
+                                        .domain(totalCoocArray)
+                                        .range(
+                                        colorbrewer
+                                                .BuPu[8]
+                                        // .Greens[8]
+
+                                );
+                                //	[
+                                //	 'blue', 'green' , 'yellow', 'red'
+                                //   'aqua', 'magenta'
+                                //		"cyan",	"blueviolet", "magenta"
+                                //	]);
                                 var colorValue = colorScale(d.totalCooc);
-                             //   console.log("TotalCooc" + d.totalCooc + " colorValue " + colorValue);
                                 return colorValue;
                             });
 
-                    node.append("text").attr("font-size", function(d) {
+                    node.append("text").attr(
+                            "font-size",
+                            function(d) {
 
-                        var fontValue = fontScale(d.totalCooc);
-                    //    console.log("TotalCooc" + d.totalCooc + " fontValue " + fontValue);
-                        return fontValue;
+                                var fontValue = fontScale(d.totalCooc);
+                                //	console.log("TotalCooc" + d.totalCooc
+                                //			+ " fontValue " + fontValue);
+                                return fontValue;
 
-                    })
-                            .text(function(d) {
+                            }).text(function(d) {
                                 return d.name; // + " cooc:  " + d.totalCooc;
                             });
-
 
                     force.on("tick", function() {
                         link.attr("x1", function(d) {
@@ -193,13 +227,13 @@
                 jl.links = [{
                     'source': 'txt2vz',
                     'target': 'by',
-                    'cooc': 4,
+                    'cooc': 2,
                     'rank': 7
 
                 }, {
                     'source': 'laurie',
                     'target': 'by',
-                    'cooc': 4,
+                    'cooc': 3,
                     'rank': 8
                 }, {
                     'source': 'txt2vz',
@@ -214,12 +248,12 @@
                 }, {
                     'source': 'summary',
                     'target': 'visualization',
-                    'cooc': 4,
+                    'cooc': 2,
                     'rank': 3
                 }, {
                     'source': 'concept',
                     'target': 'visualization',
-                    'cooc': 4,
+                    'cooc': 5,
                     'rank': 4
                 }, {
                     'source': 'document',
@@ -234,7 +268,7 @@
                 }, {
                     'source': 'document',
                     'target': 'visualization',
-                    'cooc': 4,
+                    'cooc': 6,
                     'rank': 1
                 }, {
                     'source': 'laurie',
