@@ -5,7 +5,7 @@ import groovy.transform.*
 
 class GetJSONpairs {
 
-	def highFreqWords = 70
+	def highFreqWords = 50
 	def maxWordPairs = 40
 
 	String getWordPairs(String s, int hfq, int mwp){

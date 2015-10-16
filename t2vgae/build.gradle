@@ -32,7 +32,7 @@ appcfg {
 		password = '**'
 	
 		app { id = 'txt2vz'
-			  version =15
+			  version =16
 		}
 	
 		logs {
@@ -66,19 +66,5 @@ dependencies {
 
     appengineSdk "com.google.appengine:appengine-java-sdk:$gaeVersion"
 
-
-    /**
-     * To add binary plugin just declare it as a dependency. For example,
-     * uncomment following to add GPars support to your Gaelyk project.
-     * @see https://github.com/musketyr/gpars-appengine
-     */
-    // compile 'org.codehaus.gpars:gpars-appengine:0.1'
-
-    /**
-     * Gaelyk console serves as playground or key-hole surgery tool for
-     * your application
-     * @see https://github.com/gaelyk/gaelyk-console
-     */
-    // compile 'org.gaelyk:gaelyk-console:2.0'
 
 }
