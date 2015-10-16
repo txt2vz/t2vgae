@@ -28,8 +28,8 @@ repositories {
 
 appcfg {
 	
-		email = 'lauriehirsch@gmail.com'
-		password = '%%om~tat~sat'
+		email = '**'
+		password = '**'
 	
 		app { id = 'txt2vz'
 			  version =17
