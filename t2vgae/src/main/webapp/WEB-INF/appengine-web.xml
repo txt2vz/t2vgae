@@ -1,7 +1,7 @@
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
     <application>txt2vz</application>
     
-    <version>16</version>
+    <version>17</version>
 
     <!-- Enable concurrent requests by default to serve requests in parallel -->
     <threadsafe>true</threadsafe>
@@ -16,7 +16,7 @@
 
     <!-- Uncomment this section if you want your application to be able to receive XMPP messages -->
     <!-- And create a file named jabber.groovy in /WEB-INF/groovy -->
-    <!-- Similarily, if you want to receive incoming emails -->
+    <!-- Similarily, if  you want to receive incoming emails -->
     <!-- And create a file named email.groovy in /WEB-INF/groovy -->
     <!--
     <inbound-services>

@@ -28,11 +28,11 @@ repositories {
 
 appcfg {
 	
-		email = '**'
-		password = '**'
+		email = 'lauriehirsch@gmail.com'
+		password = '%%om~tat~sat'
 	
 		app { id = 'txt2vz'
-			  version =16
+			  version =17
 		}
 	
 		logs {
@@ -55,7 +55,9 @@ dependencies {
     compile 'org.gaelyk:gaelyk:2.1.2'
 	
 	compile 'org.twitter4j:twitter4j-core:4.0.4'
-	compile 'org.jsoup:jsoup:1.7.3'
+	//compile 'org.jsoup:jsoup:1.7.3'
+    compile 'org.jsoup:jsoup:1.8.3'
+
 
     testCompile 'org.gaelyk:gaelyk-spock:0.4'
     testCompile "com.google.appengine:appengine-api-stubs:$gaeVersion",

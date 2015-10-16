@@ -47,7 +47,7 @@ class GetJSONpairs {
 			steminfo[(stemmedWord)] = forms
 		}
 
-		println "take 2 wordTopositionsMap: " + wordToPositionsMap.take(2)
+		//println "take 2 wordTopositionsMap: " + wordToPositionsMap.take(2)
 		println "take 2 steminfo: " + steminfo.take(2)
 
 		//sort by size of list (word frequency)

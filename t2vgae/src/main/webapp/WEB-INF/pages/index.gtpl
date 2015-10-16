@@ -87,8 +87,13 @@
 
 <script>
     function outputUpdate(ml2) {
-        document.querySelector('#linkTotal').value = ml2;
-    }
+        document.querySelector('#linkTotal').value = ml2;    }
+</script>
+
+<script>
+    jQuery('input').click(function() {
+        jQuery(this).select();
+    });
 </script>
 
 
