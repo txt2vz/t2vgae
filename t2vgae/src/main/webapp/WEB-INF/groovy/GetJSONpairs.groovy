@@ -92,9 +92,8 @@ class GetJSONpairs {
 					]
 				}
 		]
-		//println " data " + data
+
 		def json = new JsonBuilder(data)
-		//println "json: " + json
 		return json
 	}
 
