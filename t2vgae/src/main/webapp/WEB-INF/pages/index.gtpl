@@ -83,10 +83,11 @@
 
             <br>
             <p> Select color scheme: </p>
-
             <input type="radio" id="bupu" name="colorRadio" value="BluePurple" checked> BluePurple
             <br>
-            <input type="radio" id="burd" name="colorRadio" value="BlueRed"> BlueRed
+            <input type="radio" id="purd" name="colorRadio" value="PurpleRed"> PurpleRed
+            <br>
+            <input type="radio" id="reds" name="colorRadio" value="Reds"> Reds
             <br>
             <input type="radio" id="t2v" name="colorRadio" value="t2v"> t2v
 
