@@ -16,6 +16,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <script src="js/colorbrewer.js" type="text/javascript"></script>
+    <script src="js/frontPage.js"></script>
+    <script src="js/drawLinks.js"></script>
 
     <script>
         function openModal() {
@@ -91,233 +93,54 @@
 </script>
 
 <script>
+    frontPage();
+</script>
+
+<script>
     jQuery('input').click(function() {
         jQuery(this).select();
     });
 </script>
 
-
 <script>
-    function drawLinks(jsonlinks) {
+    //Bind keypress event to textbox
+    jQuery('#txta1').keypress(function(event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            console.log('You pressed a "enter" key in textbox');
+            pasted(txta1.value);
+        }
+        //Stop the event from propogation to other handlers
+        //If this line will be removed, then keypress event handler attached
+        //at document level will also be triggered
+        event.stopPropagation();
+    });
 
-        d3.select("svg").remove();
-        var linksobj;
+    //Bind keypress event to textbox
+    jQuery('#twitQ').keypress(function(event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            console.log('You pressed a "enter" key in Twitter Q');
+            lookupTwit(twitQ.value);
+        }
+        //Stop the event from propogation to other handlers
+        //If this line will be removed, then keypress event handler attached
+        //at document level will also be triggered
+        event.stopPropagation();
+    });
 
-        if (jsonlinks == null || typeof jsonlinks == 'object') {
-            linksobj = jsonlinks;
-        } else
-            linksobj = JSON.parse(jsonlinks);
-
-        //	var linksobj = jsonlinks; // JSON.parse(jsonlinks);
-        var links = linksobj.links;
-        var nodes = {};
-
-        var w = 960,
-                h = 500;
-        var svg = d3.select(".main").append("svg").attr(
-                "width", w).attr("height", h);
-
-        // Compute the distinct nodes from the links.
-        links.forEach(function(link) {
-            var sc = link.source;
-            var tg = link.target;
-            link.source = nodes[sc] || (nodes[sc] = {
-                        name: sc,
-                        numberLinks: 0,
-                        totalCooc: 0
-                    });
-            link.target = nodes[tg] || (nodes[tg] = {
-                        name: tg,
-                        numberLinks: 0,
-                        totalCooc: 0
-                    });
-
-            //count number of links for each node
-            nodes[sc].numberLinks++;
-            nodes[tg].numberLinks++;
-            nodes[sc].totalCooc += link.cooc;
-            nodes[tg].totalCooc += link.cooc;
-        });
-
-        var force = d3.layout.force().gravity(.05).charge(-200)
-                .size([w, h]);
-
-        var linkCoocExtent = d3.extent(links, function(d) {
-            return d.cooc
-        });
-
-        force.nodes(d3.values(nodes)).links(links)
-                .linkDistance(
-                function(d) {
-
-                    var distanceScale = d3.scale
-                            .linear().domain(
-                            linkCoocExtent)
-                            .range([180, 80]);
-                    return distanceScale(d.cooc);
-
-                }).start();
-
-        //  console.log(" links cooc extent " + linkCoocExtent);
-        var link = svg.selectAll(".link").data(links).enter()
-                .append("line").attr(
-                "stroke-width",
-                function(d) {
-
-                    var linkWidthScale = d3.scale
-                            .linear().domain(
-                            linkCoocExtent)
-                            .range([0.1, 3]);
-                    return linkWidthScale(d.cooc);
-
-                }).attr("class", "link");
-
-        var totalCoocArray = [];
-        var nodeTotalCoocExtent = d3.extent(d3.values(nodes),
-                function(d) {
-                    totalCoocArray.push(d.totalCooc);
-                    return d.totalCooc
-                });
-
-        var node = svg.selectAll(".node")
-                .data(d3.values(nodes)).enter().append("g")
-                .attr("class", "node").call(force.drag);
-
-        var fontScale = d3.scale.linear().domain(
-                nodeTotalCoocExtent).range([8, 20]);
-
-        node
-                .append("rect")
-                .attr(
-                "width",
-                function(d) {
-
-                    return d.name.length * (fontScale(d.totalCooc) / 2) + 20;
-                })
-                .attr("height", function(d) {
-                    return 20;
-                })
-                .attr("ry", 8)
-                .attr("rx", 8)
-                .attr("y", -15)
-                .attr("x", -5)
-
-                .attr(
-                "opacity",
-                function(d) {
-                    var opacityScale = d3.scale
-                            .linear()
-                            .domain(nodeTotalCoocExtent)
-                            .range([0.4, 0.7]);
-                    var opacityValue = opacityScale(d.totalCooc);
-                    return opacityValue;
-                })
-                .attr(
-                "fill",
-                function(d) {
-
-                    var colorScale = d3.scale
-                            .quantile()
-                            .domain(totalCoocArray)
-                            .range(
-                            colorbrewer
-                                    .BuPu[8]
-                            // .Greens[8]
-
-                    );
-                    //	[
-                    //	 'blue', 'green' , 'yellow', 'red'
-                    //   'aqua', 'magenta'
-                    //		"cyan",	"blueviolet", "magenta"
-                    //	]);
-                    var colorValue = colorScale(d.totalCooc);
-                    return colorValue;
-                });
-
-        node.append("text").attr(
-                "font-size",
-                function(d) {
-
-                    var fontValue = fontScale(d.totalCooc);
-                    //	console.log("TotalCooc" + d.totalCooc
-                    //			+ " fontValue " + fontValue);
-                    return fontValue;
-
-                }).text(function(d) {
-                    return d.name; // + " cooc:  " + d.totalCooc;
-                });
-
-        force.on("tick", function() {
-            link.attr("x1", function(d) {
-                return d.source.x;
-            }).attr("y1", function(d) {
-                return d.source.y;
-            }).attr("x2", function(d) {
-                return d.target.x;
-            }).attr("y2", function(d) {
-                return d.target.y;
-            });
-
-            node.attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-        });
-    }
-</script>
-<script>
-    var jl = {};
-    jl.links = [{
-        'source': 'txt2vz',
-        'target': 'by',
-        'cooc': 2,
-        'rank': 7
-    }, {
-        'source': 'laurie',
-        'target': 'by',
-        'cooc': 3,
-        'rank': 8
-    }, {
-        'source': 'txt2vz',
-        'target': 'document',
-        'cooc': 4,
-        'rank': 0
-    }, {
-        'source': 'analysis',
-        'target': 'visualization',
-        'cooc': 4,
-        'rank': 2
-    }, {
-        'source': 'summary',
-        'target': 'visualization',
-        'cooc': 2,
-        'rank': 3
-    }, {
-        'source': 'concept',
-        'target': 'visualization',
-        'cooc': 5,
-        'rank': 4
-    }, {
-        'source': 'document',
-        'target': 'mind',
-        'cooc': 4,
-        'rank': 7
-    }, {
-        'source': 'mind',
-        'target': 'map',
-        'cooc': 4,
-        'rank': 7
-    }, {
-        'source': 'document',
-        'target': 'visualization',
-        'cooc': 6,
-        'rank': 1
-    }, {
-        'source': 'laurie',
-        'target': 'hirsch',
-        'cooc': 4,
-        'rank': 2
-    }];
-    drawLinks(jl);
+    //Bind keypress event to textbox
+    jQuery('#url2').keypress(function(event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            console.log('You pressed a "enter" key in url2');
+            lookupURL(url2.value);
+        }
+        //Stop the event from propogation to other handlers
+        //If this line will be removed, then keypress event handler attached
+        //at document level will also be triggered
+        event.stopPropagation();
+    });
 </script>
 
 <script>
