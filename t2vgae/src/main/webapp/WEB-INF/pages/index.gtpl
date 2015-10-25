@@ -80,6 +80,16 @@
             <label for="linkTotal">Set Max Links to Show</label>
             <input type="range" min="1" max="200" value="40" id="linkInput" step="1" oninput="outputUpdate(value)">
             <output for="linkTotal" id="linkTotal">40</output>
+
+            <br>
+            <p> Select color scheme: </p>
+
+            <input type="radio" id="bupu" name="colorRadio" value="BluePurple" checked> BluePurple
+            <br>
+            <input type="radio" id="burd" name="colorRadio" value="BlueRed"> BlueRed
+            <br>
+            <input type="radio" id="t2v" name="colorRadio" value="t2v"> t2v
+
         </div>
     </div>
 </div>

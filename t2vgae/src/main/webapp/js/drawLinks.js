@@ -14,22 +14,22 @@ function drawLinks(jsonlinks) {
 
 	var w = 700, h = 800;
 	var svg = d3.select(".main").append("svg").attr("width", w).attr("height",
-			h);
+		h);
 
 	// Compute the distinct nodes from the links.
 	links.forEach(function(link) {
 		var sc = link.source;
 		var tg = link.target;
 		link.source = nodes[sc] || (nodes[sc] = {
-			name : sc,
-			numberLinks : 0,
-			totalCooc : 0
-		});
+				name : sc,
+				numberLinks : 0,
+				totalCooc : 0
+			});
 		link.target = nodes[tg] || (nodes[tg] = {
-			name : tg,
-			numberLinks : 0,
-			totalCooc : 0
-		});
+				name : tg,
+				numberLinks : 0,
+				totalCooc : 0
+			});
 
 		// count number of links for each node
 		nodes[sc].numberLinks++;
@@ -45,24 +45,24 @@ function drawLinks(jsonlinks) {
 	});
 
 	force.nodes(d3.values(nodes)).links(links).linkDistance(
-			function(d) {
+		function(d) {
 
-				var distanceScale = d3.scale.linear().domain(linkCoocExtent)
-						.range([ 180, 80 ]);
-				return distanceScale(d.cooc);
+			var distanceScale = d3.scale.linear().domain(linkCoocExtent)
+				.range([ 180, 80 ]);
+			return distanceScale(d.cooc);
 
-			}).start();
+		}).start();
 
 	// console.log(" links cooc extent " + linkCoocExtent);
 	var link = svg.selectAll(".link").data(links).enter().append("line").attr(
-			"stroke-width",
-			function(d) {
+		"stroke-width",
+		function(d) {
 
-				var linkWidthScale = d3.scale.linear().domain(linkCoocExtent)
-						.range([ 0.1, 3 ]);
-				return linkWidthScale(d.cooc);
+			var linkWidthScale = d3.scale.linear().domain(linkCoocExtent)
+				.range([ 0.1, 3 ]);
+			return linkWidthScale(d.cooc);
 
-			}).attr("class", "link");
+		}).attr("class", "link");
 
 	var totalCoocArray = [];
 	var nodeTotalCoocExtent = d3.extent(d3.values(nodes), function(d) {
@@ -71,10 +71,10 @@ function drawLinks(jsonlinks) {
 	});
 
 	var node = svg.selectAll(".node").data(d3.values(nodes)).enter()
-			.append("g").attr("class", "node").call(force.drag);
+		.append("g").attr("class", "node").call(force.drag);
 
 	var fontScale = d3.scale.linear().domain(nodeTotalCoocExtent).range(
-			[ 8, 20 ]);
+		[ 8, 20 ]);
 
 	node.append("rect").attr("width", function(d) {
 
@@ -83,30 +83,34 @@ function drawLinks(jsonlinks) {
 		return 20;
 	}).attr("ry", 8).attr("rx", 8).attr("y", -15).attr("x", -5)
 
-	.attr(
-			"opacity",
-			function(d) {
-				var opacityScale = d3.scale.linear()
-						.domain(nodeTotalCoocExtent).range([ 0.4, 0.7 ]);
-				var opacityValue = opacityScale(d.totalCooc);
-				return opacityValue;
-			}).attr(
-			"fill",
-			function(d) {
+		.attr(
+		"opacity",
+		function(d) {
+			var opacityScale = d3.scale.linear()
+				.domain(nodeTotalCoocExtent).range([ 0.4, 0.7 ]);
+			var opacityValue = opacityScale(d.totalCooc);
+			return opacityValue;
+		}).attr(
+		"fill",
+		function(d) {
 
-				var colorScale = d3.scale.quantile().domain(totalCoocArray)
-						.range(colorbrewer.BuPu[8]
-						// .Greens[8]
+			if (document.getElementById('bupu').checked) {
+				colorScale = d3.scale.quantile().domain(totalCoocArray)
+					.range(colorbrewer.BuPu[8]);
+			} else
+			if (document.getElementById('burd').checked) {
+				colorScale = d3.scale.quantile().domain(totalCoocArray)
+					.range(colorbrewer.PuRd[8]);
+			}
+			else {
+				colorScale = d3.scale.quantile().domain(totalCoocArray)
+					.range(["magenta", "blueviolet", "cyan" ]);
+			};
 
-						);
-				// [
-				// 'blue', 'green' , 'yellow', 'red'
-				// 'aqua', 'magenta'
-				// "cyan", "blueviolet", "magenta"
-				// ]);
-				var colorValue = colorScale(d.totalCooc);
-				return colorValue;
-			});
+
+			var colorValue = colorScale(d.totalCooc);
+			return colorValue;
+		});
 
 	node.append("text").attr("font-size", function(d) {
 
@@ -135,4 +139,3 @@ function drawLinks(jsonlinks) {
 		});
 	});
 }
-

@@ -28,7 +28,7 @@ repositories {
 
 appcfg {
 	
-		email = '**@gmail.com'
+		email = '@gmail.com'
 		password = '**'
 	
 		app { id = 'txt2vz'
