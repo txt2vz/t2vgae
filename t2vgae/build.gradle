@@ -15,9 +15,6 @@ buildscript {
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.6'
         classpath 'org.gradle.api.plugins:gradle-appengine-geb-plugin:0.4'
-		classpath 'org.twitter4j:twitter4j-core:4.0.2'
-		classpath 'org.jsoup:jsoup:1.7.3'
-
     }
 }
 
