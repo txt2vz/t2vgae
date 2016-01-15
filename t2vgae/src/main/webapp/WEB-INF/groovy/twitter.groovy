@@ -6,25 +6,28 @@ def q = params.get("q")
 int ml = params.get("maxLinks").toInteger()
 
 Twitter twitter = getTwitterAuth();
-Query query = new Query(q);
+Query query = new Query(q + "-filter:retweets");
 query.setCount(40)
 //GeoLocation sheffield = new GeoLocation(53.377127, -1.467705);
 //query.setGeoCode(sheffield, distance, Query.KILOMETERS)
 QueryResult result = twitter.search(query);
 
 def twCount =0;
-List<Status> tweets = []
+def txtout
+
 for   (i in 0..4){//(;;) {
 	result = twitter.search(query);
-	tweets.addAll(result.getTweets())
+	def tweets = result.getTweets()
+	
+	tweets.each {
+		twCount++
+		txtout  = txtout + it.getText()
+	}	
+	
 	query = result.nextQuery()
 	if (query == null) break;
 }
-
-def txtout
-tweets.each {
-	txtout  = txtout + it.getText()
-}
+System.out.println( "twCount : $twCount" )
 
 def gjp = new GetJSONpairs();
 String json = gjp.getWordPairs(txtout, ml);

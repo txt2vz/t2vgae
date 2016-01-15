@@ -29,7 +29,7 @@ appcfg {
 		password = '**'
 	
 		app { id = 'txt2vz'
-			  version =18
+			  version =19
 		}
 	
 		logs {
