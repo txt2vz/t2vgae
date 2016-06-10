@@ -51,7 +51,6 @@ line.link {
 		<div class="well col-md-12">
 			<div class="row">
 
-
 				<div class="col-md-3">
 					Show Tree:
 					<form id="expanded">
@@ -59,13 +58,14 @@ line.link {
 						Fully Expanded <br /> <input type="radio" id="oneLevel"
 							name="type" value="oneLevel" checked="true"> One Level
 					</form>
-					<br> Tree Type:
-					<form id="treeType">
+					<br> Network Type:
+					<form id="networkType">
 						<input type="radio" id="dendro" name="tt" value="dendro">
-						Dendrogram <br /> <input type="radio" id="force" name="tt"
-							value="force" checked="true"> Force
+						Dendrogram <br /> <input type="radio" id="forceTree" name="tt"
+							value="forceTree" checked="true"> Force (Tree) <br /> <input
+							type="radio" id="forceNet" name="tt" value="forceNet">
+						Force (Network)
 					</form>
-
 				</div>
 
 				<div class="col-md-3">
@@ -83,6 +83,7 @@ line.link {
 		</div>
 		<div class="row col-md-12">
 			<div id="tree-container"></div>
+			<div class="main"></div>
 		</div>
 	</div>
 
@@ -90,33 +91,43 @@ line.link {
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="js/drawForce.js"></script>
 	<script src="js/drawDendrogram.js"></script>
-
+	<script src="js/drawLinks.js"></script>
+	<script src="js/colorbrewer.js"></script>
+	<script src="js/frontPage.js"></script>
+	<script>
+		frontPage();
+	</script>
 	<script>
 		function pasted(s) {
 			s = s.replace(/%/g, '');
 
-			jQuery
-					.ajax({
-						type : "POST",
-						url : "textIn.groovy",
-						cache : false,
-						data : "s=" + s,
-						success : function(data, textStatus, jqXHR) {
-							//drawLinks(data);
-							console.log("data back from draw " + data);
+			var networkType = jQuery('input[name=tt]:checked', '#networkType')
+					.val();
 
-							var force = jQuery('input[name=tt]:checked', '#treeType')
-									.val() == "force";
-							console.log("force is " + force);
+		
+			jQuery.ajax({
+				type : "GET",
+				url : "textIn.groovy",
+				cache : false,
+				data : {
+					s : s,
+					networkType : networkType
+				},
+				success : function(data, textStatus, jqXHR) {
+					//drawLinks(data);
+					console.log("data back from draw " + data);
 
-							//drawDendrogram(data);
-							if (force)
-								drawForce(data);
-							else
-								drawDendrogram(data);
-						},
+					//drawDendrogram(data);
+					if (networkType == "forceNet")
+						drawLinks(data);
 
-					});
+					else if (networkType == "forceTree")
+						drawForce(data);
+					else
+						drawDendrogram(data)
+				},
+
+			});
 		}
 	</script>
 </body>

@@ -95,10 +95,11 @@ function drawLinks(jsonlinks) {
 		"fill",
 		function(d) {
 
-			if (document.getElementById('bupu').checked) {
+			if (true){//document.getElementById('bupu').checked) {
 				colorScale = d3.scale.quantile().domain(totalCoocArray)
 					.range(colorbrewer.BuPu[8]);
-			} else
+			}; 
+		/*	else
 			if (document.getElementById('purd').checked) {
 				colorScale = d3.scale.quantile().domain(totalCoocArray)
 					.range(colorbrewer.PuRd[8]);
@@ -110,7 +111,7 @@ function drawLinks(jsonlinks) {
 				colorScale = d3.scale.quantile().domain(totalCoocArray)
 					.range(["magenta", "blueviolet", "cyan"]);
 			};
-
+*/
 			var colorValue = colorScale(d.totalCooc);
 			return colorValue;
 		});
