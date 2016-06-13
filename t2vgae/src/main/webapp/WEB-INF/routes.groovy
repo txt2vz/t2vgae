@@ -1,6 +1,7 @@
 get "/", forward: "/WEB-INF/pages/index.gtpl"
 
 get "/t2v", forward: "/WEB-INF/pages/t2v.gtpl"
+get "/t2v2", forward: "/WEB-INF/pages/t2v2.gtpl"
 //get "/datetime", forward: "/datetime.groovy"
 get "twitter", forward: "/WEB-INF/groovy/twitter.groovy"
 

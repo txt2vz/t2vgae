@@ -39,7 +39,8 @@ line.link {
 	stroke-width: 1.5px;
 }
 
-.controls {font-size: 70%;
+.controls {
+	font-size: 70%;
 }
 
 hr {
@@ -88,7 +89,7 @@ hr {
 				</div>
 
 				<div class="col-md-2 controls">
-				
+
 					<label for="maxLinks">Set Max Links to Show</label> <input
 						type="range" min="1" max="200" value="30" id="maxLinks" step="1"
 						oninput="outputMaxLinks(value)">
@@ -136,9 +137,11 @@ hr {
 		var cooc = 0.5;
 		var maxLinks = 30;
 		var maxWords = 50;
-		
+		var oneLevel = true;
+		var networkType = "forceTree";
+
 		frontPage();
-		
+
 		function outputCooc(coocIn) {
 			document.querySelector('#cooc2').value = coocIn;
 			cooc = document.getElementById("cooc").value;
@@ -150,7 +153,7 @@ hr {
 			maxLinks = document.getElementById("maxLinks").value;
 			console.log("maxLinks set: " + maxLinks);
 		}
-		
+
 		function outputMaxWords(maxWordsIn) {
 			document.querySelector('#maxWords2').value = maxWordsIn;
 			maxLinks = document.getElementById("maxWords").value;
@@ -159,26 +162,30 @@ hr {
 	</script>
 
 	<script>
+		function draw(data, textStatus, jqXHR) {
+
+			console.log("data back from draw " + data);
+			oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
+		
+
+			if (networkType == "forceNet")
+				drawLinks(data);
+
+			else if (networkType == "forceTree")
+				drawForce(data);
+			else
+				drawDendrogram(data)
+		};
+
+		function setNetworkType() {
+			networkType = jQuery('input[name=tt]:checked', '#networkType')
+					.val();
+		};
+
 		function pasted(s) {
 			s = s.replace(/%/g, '');
-
-			var networkType = jQuery('input[name=tt]:checked', '#networkType')
-					.val();
+			setNetworkType();
 			
-			function draw (data, textStatus, jqXHR) {
-				//drawLinks(data);
-				console.log("data back from draw " + data);
-
-				//drawDendrogram(data);
-				if (networkType == "forceNet")
-					drawLinks(data);
-
-				else if (networkType == "forceTree")
-					drawForce(data);
-				else
-					drawDendrogram(data)
-			};
-
 			jQuery.ajax({
 				type : "POST",
 				url : "textIn.groovy",
@@ -191,18 +198,9 @@ hr {
 					maxWords : maxWords
 				},
 				success : function(data, textStatus, jqXHR) {
-					//drawLinks(data);
-					
-					console.log("data back from draw " + data);
-            draw(data);
-					//drawDendrogram(data);
-					//if (networkType == "forceNet")
-				//		drawLinks(data);
 
-				//	else if (networkType == "forceTree")
-				//		drawForce(data);
-				//	else
-				//		drawDendrogram(data)
+					console.log("data back from draw " + data);
+					draw(data);
 				},
 
 			});

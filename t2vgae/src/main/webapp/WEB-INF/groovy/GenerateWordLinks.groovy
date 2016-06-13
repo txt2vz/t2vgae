@@ -10,26 +10,32 @@ class GenerateWordLinks {
 
 	def highFreqWords = 100
 	def maxWordPairs = 80
-
+    def coocIn = 0.5
 	String networkType = "tree"
 
-	String getJSONnetwork(String s, int hfq, int mwp){
-		this.highFreqWords=hfq
-		this.maxWordPairs=mwp
-		getJSONnetwork(s)
-	}
+//	String getJSONnetwork(String s, int hfq, int mwp){
+//		this.highFreqWords=hfq
+//		this.maxWordPairs=mwp
+//		getJSONnetwork(s)
+//	}
+//
+//	String getJSONnetwork(String s, int mwp){
+//		this.maxWordPairs=mwp
+//		getJSONnetwork(s)
+//	}
 
-	String getJSONnetwork(String s, int mwp){
-		this.maxWordPairs=mwp
-		getJSONnetwork(s)
-	}
-
-	String  getJSONnetwork(String s, String netType) {
+	String  getJSONnetwork(String s, String netType, Float cin, int maxL) {
 		networkType = netType
+		this.coocIn = cin
+		this.maxWordPairs=maxL
+		
+		println "in CONSTRUCTOORRR cocoIn  $coocIn maxWordPairs $maxWordPairs"
 		getJSONnetwork (s)
+		
 	}
 
 	String getJSONnetwork(String s) {
+		println "coocIn 22222:  $coocIn"
 
 		//new File ('athenaBookChapter.txt').text
 		s = s ?: "empty text"
@@ -38,7 +44,6 @@ class GenerateWordLinks {
 		// smallStopSet2);//  stopSet)
 
 		println "---------------------------******************************"
-
 		println " words size: " + words.size() + " unique words " + words.unique(false).size()
 
 		def stemmer = new PorterStemmer()
@@ -68,7 +73,7 @@ class GenerateWordLinks {
 		//wordToFormsMap = wordToFormsMap.drop(wordToFormsMap.size() - highFreqWords)
 		wordToPositionsMap = wordToPositionsMap.take(highFreqWords)
 
-		println "after; take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
+		println "after take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
 
 		def wordPairList = []
 
@@ -104,8 +109,7 @@ class GenerateWordLinks {
 
 			links: wl.collect {
 
-				def src = stemMap[it.word0].max { it.value }.key
-				println "it .vaue  " +  stemMap[it.word0].max { it.value }.key
+				def src = stemMap[it.word0].max { it.value }.key				
 				def tgt = stemMap[it.word1].max { it.value }.key
 
 				[source: src,
@@ -158,7 +162,7 @@ class GenerateWordLinks {
 			}else{
 
 				if (it.value == target){
-					println "skipping it.value ${it.value} source $source target $target"
+					//println "skipping it.value ${it.value} source $source target $target"
 				} else {
 
 					if (it.value ==source) {
@@ -171,13 +175,13 @@ class GenerateWordLinks {
 							//do not create a new node if one already exists
 							if (addedNodes.add( it.value) && ! addedNodes.contains(target) && ! addedChildren.contains(target)  ){
 
-								println "adding " + it.value + " to added $addedNodes"
+							//	println "adding " + it.value + " to added $addedNodes"
 								addedChildren.add(target)
 
 								m  << ["name": it.value, "children": [["name" : target]]]
 							}
 							else {
-								println "already added so skipping source $source target $target it.value " + it.value
+								//println "already added so skipping source $source target $target it.value " + it.value
 							}
 						}
 					}

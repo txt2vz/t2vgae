@@ -1,12 +1,14 @@
-def s = params.get("s")
+def text = params.get("s")
 def networkType = params.get("networkType")
 
-System.out.println "***networkType is $networkType s = $s"
+float cooc = params.get("cooc").toFloat()
+int maxLinks = params.get("maxLinks").toInteger()
+System.out.println "***TEXTIN: networkType is $networkType text = $text cooc: $cooc maxLinks $maxLinks"
 
 def gwl = new GenerateWordLinks();
 
 def nt
 if (networkType == "forceNet") nt = "graph" else nt = "tree"
 
-def json = gwl.getJSONnetwork(s, nt)
+def json = gwl.getJSONnetwork(text, nt, cooc, maxLinks)
 print json

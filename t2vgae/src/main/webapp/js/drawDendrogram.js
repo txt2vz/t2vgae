@@ -295,7 +295,7 @@ function drawDendrogram(json) {
 	zoomListener.scale(scale);
 	zoomListener.translate([ x, y ]);
 
-	var oneLevel = $('input[name=type]:checked', '#expanded').val() == "oneLevel";
+	//var oneLevel = $('input[name=type]:checked', '#expanded').val() == "oneLevel";
 
 	console.log("oneLevel: " + oneLevel);
 
