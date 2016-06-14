@@ -80,10 +80,10 @@ hr {
 					</form>
 					<br> Network Type:
 					<form id="networkType">
-						<input type="radio" id="dendro" name="tt" value="dendro">
-						Dendrogram <br /> <input type="radio" id="forceTree" name="tt"
+						<input type="radio" id="dendro" name="nt" value="dendro">
+						Dendrogram <br /> <input type="radio" id="forceTree" name="nt"
 							value="forceTree" checked="true"> Force (Tree) <br /> <input
-							type="radio" id="forceNet" name="tt" value="forceNet">
+							type="radio" id="forceNet" name="nt" value="forceNet">
 						Force (Network)
 					</form>
 				</div>
@@ -139,6 +139,7 @@ hr {
 		var maxWords = 50;
 		var oneLevel = true;
 		var networkType = "forceTree";
+		var jsonDataTemp;
 
 		frontPage();
 
@@ -158,27 +159,42 @@ hr {
 			document.querySelector('#maxWords2').value = maxWordsIn;
 			maxLinks = document.getElementById("maxWords").value;
 			console.log("maxWords set: " + maxWords);
-		}
+		};
+	
+		// can't swap because JSON is different
+	//	jQuery(document).ready(function () {
+	//		jQuery('input[type=radio][name=nt]').change (function() {
+	//			if (jsonDataTemp) {
+	//				console.log ("change network type");
+	//				setNetworkType();
+	//				draw(jsonDataTemp);
+	//			}				
+	//		});
+	//	});
+				
+		
+		
 	</script>
 
 	<script>
-		function draw(data, textStatus, jqXHR) {
+		function draw(jsonData) {
+			jsonDataTemp = jsonData;
 
-			console.log("data back from draw " + data);
+			console.log("data back from draw " + jsonData);
 			oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
 		
 
 			if (networkType == "forceNet")
-				drawLinks(data);
+				drawLinks(jsonData);
 
 			else if (networkType == "forceTree")
-				drawForce(data);
+				drawForce(jsonData);
 			else
-				drawDendrogram(data)
+				drawDendrogram(jsonData)
 		};
 
 		function setNetworkType() {
-			networkType = jQuery('input[name=tt]:checked', '#networkType')
+			networkType = jQuery('input[name=nt]:checked', '#networkType')
 					.val();
 		};
 
@@ -197,10 +213,10 @@ hr {
 					maxLinks : maxLinks,
 					maxWords : maxWords
 				},
-				success : function(data, textStatus, jqXHR) {
+				success : function(jsonData, textStatus, jqXHR) {
 
-					console.log("data back from draw " + data);
-					draw(data);
+					console.log("jsonData back from draw " + jsonData);
+					draw(jsonData);
 				},
 
 			});
