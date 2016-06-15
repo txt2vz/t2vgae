@@ -8,8 +8,8 @@ import StopSet;
 
 class GenerateWordLinks {
 
-	def highFreqWords = 100
-	def maxWordPairs = 80
+	def highFreqWords = 80
+	def maxWordPairs = 40
     def coocIn = 0.5
 	String networkType = "tree"
 
@@ -133,11 +133,14 @@ class GenerateWordLinks {
 			if (tree.isEmpty()){
 				tree <<
 						[name: src,
-							children: [[name: target]]]
-				//println "tree at start $tree"
+							children: [[name: target]]]			
+						addedNodes.add(src)
+						addedChildren.add(target)
+						
 			}
 			else {
 				addPairToMap(tree, src, target)
+				addPairToMap(tree, target, src)
 			}
 		}
 		def json = new JsonBuilder(tree)
@@ -218,7 +221,8 @@ class GenerateWordLinks {
 				.findAll { it <= MAX_DISTANCE }
 				.sum {
 					//powers[it]
-					Math.pow(0.5, it)
+					//Math.pow(0.5, it)
+					Math.pow(coocIn, it)
 				}
 
 		return coocVal ?: 0.0;

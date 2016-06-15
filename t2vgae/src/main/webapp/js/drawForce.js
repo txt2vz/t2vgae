@@ -13,11 +13,14 @@ function drawForce(json) {
 	var link = svg.selectAll(".link"), node = svg.selectAll(".node");
 
 	root = JSON.parse(json);
+	console.log ("root " + root.name);
 
 	update();
 
 	function update() {
 		var nodes = flatten(root), links = d3.layout.tree().links(nodes);
+		
+		console.log ("nodes " + nodes);
 
 		// Restart the force layout.
 		force.nodes(nodes).links(links).start();
@@ -69,7 +72,8 @@ function drawForce(json) {
 	}
 
 	function color(d) {
-		return d._children ? "blueviolet" //"#3182bd" // collapsed package
+		return  d.name == root.name ? "green"
+		: d._children ? "blueviolet" //"#3182bd" // collapsed package
 		: d.children ? "aqua"//"#c6dbef" // expanded package
 		: "magenta";//"#fd8d3c"; // leaf node
 	}

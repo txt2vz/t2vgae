@@ -6,7 +6,7 @@ function drawDendrogram(json) {
 	// var jsonFile = e.target.result;
 	var treeData = JSON.parse(json);
 
-	var fillColour = "mediumslateblue";
+	var fillColour = "cyan"; //"mediumslateblue";
 	// Calculate total nodes, max label length
 	var totalNodes = 0;
 	var maxLabelLength = 20;

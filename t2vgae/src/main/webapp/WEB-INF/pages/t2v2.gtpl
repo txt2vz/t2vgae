@@ -43,6 +43,11 @@ line.link {
 	font-size: 70%;
 }
 
+output {
+	font-size: 90%;
+	display: inline;
+}
+
 hr {
 	background-color: blue;
 	height: 1px;
@@ -53,25 +58,39 @@ hr {
 	background-color: #e6fff2;
 }
 </style>
+<title>txt2vz</title>
 
 <body>
 	<div class="container  col-md-12">
-		<h1>txt2vz Tree</h1>
-		<p>Select fields, choose a valid text file and upload/draw:</p>
+		<a
+			href="https://plus.google.com/u/0/b/117816592489907408686/117816592489907408686/about"
+			target="_blank"> <em style="font-size: 28px"><b> <span
+					style="color: blueviolet">t</span><span style="color: cyan">xt</span><span
+					style="color: magenta">2</span><span style="color: cyan">vz</span></b></em>
+		</a>
 		<div class="well col-md-12">
 			<div class="row">
+				<div class="col-md-4">
 
-				<div class="col-md-6">
+					<textarea id="txta1" COLS="40" ROWS="6"
+						placeholder="Type or paste text here"></textarea>
+					<br> <input type="button" value="viz text"
+						onclick="textIn(txta1.value)">
+				</div>
+				<div class="col-md-4">
+					Enter Twitter query or hashtag: <input type="text" name="twitQ"
+						id="twitQ" size=40 value="word cloud"> <input
+						type="button" value="viz Twitter"
+						onclick="textIn(twitQ.value, true )"> <br />
+						
+						 <br /> Enter URL: <input type="text" id="url"
+						value="https://en.wikipedia.org/wiki/Tag_cloud" size=40>
 
-					<p>Paste in text</p>
-					<textarea id="txta1" COLS="50" ROWS="5"
-						placeholder="Type or paste text here"> </textarea>
-					<input type="button" value="viz text" onclick="pasted(txta1.value)">
-
-					<br></br>
+					<button onclick="textIn(url.value)">viz URL</button>
+					<br />
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					Show Tree:
 					<form id="expanded">
 						<input type="radio" id="full" name="type" value="full">
@@ -87,43 +106,49 @@ hr {
 						Force (Network)
 					</form>
 				</div>
+				<div id="modal">
+					<img id="loader" src="images/ajax-loaderBig.gif" />
+					<div id="fade"></div>
+				</div>
 
 				<div class="col-md-2 controls">
 
-					<label for="maxLinks">Set Max Links to Show</label> <input
-						type="range" min="1" max="200" value="30" id="maxLinks" step="1"
-						oninput="outputMaxLinks(value)">
-
+					<label for="maxLinks">Max Links to Show: </label>
 					<output for="maxLinks" id="maxLinks2">30</output>
-
-					<hr />
-					<label for="maxWords">Set Max Words to analyse</label> <input
-						type="range" min="1" max="200" value="30" id="maxWords" step="1"
-						oninput="outputMaxWords(value)">
-
+					<input type="range" min="1" max="200" value="30" id="maxLinks"
+						step="1" oninput="outputMaxLinks(value)"> <br> <br>
+					<label for="maxWords">Max Words to analyse</label>
 					<output for="maxWords" id="maxWords2">30</output>
 
-					<hr />
-					<label for="cooc">Set Power Value for Cooccurence</label> <input
-						type="range" min="0.3" max="0.9" value="0.5" id="cooc" step="0.2"
-						list="steplist" oninput="outputCooc(value)">
+					<input type="range" min="1" max="200" value="30" id="maxWords"
+						step="1" oninput="outputMaxWords(value)"> <br> <br>
+					<label for="cooc">Power Value: </label>
+					<output for="cooc" id="cooc2">0.5</output>
+
+					<input type="range" min="0.3" max="0.9" value="0.5" id="cooc"
+						step="0.2" list="steplist" oninput="outputCooc(value)">
 					<datalist id="steplist">
 						<option>0.3</option>
 						<option>0.5</option>
 						<option>0.7</option>
 						<option>0.9</option>
 					</datalist>
-					<output for="cooc" id="cooc2">0.5</output>
-
 				</div>
-
 			</div>
 		</div>
 		<div class="row col-md-12">
 			<div id="tree-container"></div>
 			<div class="main"></div>
 		</div>
+
+		<div class="navbar navbar-fixed-bottom"
+			style="font-family: arial; font-size: 10px; background-color: white;">
+			By Laurie Hirsch Info: <a
+				href="https://plus.google.com/u/0/b/117816592489907408686/117816592489907408686/about"
+				target="_blank">txt2vz</a>
+		</div>
 	</div>
+
 
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
@@ -143,6 +168,16 @@ hr {
 
 		frontPage();
 
+		function openModal() {
+			document.getElementById('modal').style.display = 'block';
+			document.getElementById('fade').style.display = 'block';
+		}
+
+		function closeModal() {
+			document.getElementById('modal').style.display = 'none';
+			document.getElementById('fade').style.display = 'none';
+		}
+
 		function outputCooc(coocIn) {
 			document.querySelector('#cooc2').value = coocIn;
 			cooc = document.getElementById("cooc").value;
@@ -160,20 +195,17 @@ hr {
 			maxLinks = document.getElementById("maxWords").value;
 			console.log("maxWords set: " + maxWords);
 		};
-	
+
 		// can't swap because JSON is different
-	//	jQuery(document).ready(function () {
-	//		jQuery('input[type=radio][name=nt]').change (function() {
-	//			if (jsonDataTemp) {
-	//				console.log ("change network type");
-	//				setNetworkType();
-	//				draw(jsonDataTemp);
-	//			}				
-	//		});
-	//	});
-				
-		
-		
+		//	jQuery(document).ready(function () {
+		//		jQuery('input[type=radio][name=nt]').change (function() {
+		//			if (jsonDataTemp) {
+		//				console.log ("change network type");
+		//				setNetworkType();
+		//				draw(jsonDataTemp);
+		//			}				
+		//		});
+		//	});
 	</script>
 
 	<script>
@@ -182,7 +214,6 @@ hr {
 
 			console.log("data back from draw " + jsonData);
 			oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
-		
 
 			if (networkType == "forceNet")
 				drawLinks(jsonData);
@@ -198,16 +229,18 @@ hr {
 					.val();
 		};
 
-		function pasted(s) {
+		function textIn(s, tw) {
 			s = s.replace(/%/g, '');
 			setNetworkType();
-			
+			openModal();
+
 			jQuery.ajax({
 				type : "POST",
 				url : "textIn.groovy",
 				cache : false,
 				data : {
 					s : s,
+					tw : tw,
 					networkType : networkType,
 					cooc : cooc,
 					maxLinks : maxLinks,
@@ -217,10 +250,14 @@ hr {
 
 					console.log("jsonData back from draw " + jsonData);
 					draw(jsonData);
+					closeModal();
 				},
 
 			});
-		}
+		};
+		
+		
+		closeModal();
 	</script>
 </body>
 </html>
