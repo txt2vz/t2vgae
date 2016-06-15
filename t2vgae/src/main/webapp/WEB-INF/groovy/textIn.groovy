@@ -8,7 +8,7 @@ String text = params.get("s")
 
 System.out.println  "zzzzzzzzzzzzzz in twitter text $text"
 
-
+//twitter query
 if ( params.get("tw")){
 	System.out.println  "FOund tw " +  params.get("tw")
 	Twitter twitter = getTwitterAuth();
@@ -19,7 +19,7 @@ if ( params.get("tw")){
 	QueryResult result = twitter.search(query);
 
 	def twCount =0;
-	def twitterText= ""	
+	def twitterText= ""
 
 	for   (i in 0..4){//(;;) {
 		result = twitter.search(query);
@@ -35,9 +35,13 @@ if ( params.get("tw")){
 	}
 	System.out.println( "twCount : $twCount" )
 	text = twitterText
+} else 
+
+// should use apache commons URLValidator
+if (text.startsWith("http") && text.size() < 256) {
+	def url = text.toURL()
+	text = Jsoup.parse(url.getText()).text()
 }
-
-
 
 def networkType = params.get("networkType")
 float cooc = params.get("cooc").toFloat()
@@ -48,11 +52,6 @@ def gwl = new GenerateWordLinks()
 
 def nt = (networkType == "forceNet") ? "graph" : "tree"
 
-// should use apache commons URLValidator
-if (text.startsWith("http") && text.size() < 256) {
-	def url = text.toURL()
-	text = Jsoup.parse(url.getText()).text()
-}
 
 def	json = gwl.getJSONnetwork(text, nt, cooc, maxLinks)
 
