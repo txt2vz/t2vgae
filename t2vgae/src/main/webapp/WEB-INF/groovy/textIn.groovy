@@ -6,11 +6,9 @@ import twitter4j.Twitter;;
 
 String text = params.get("s")
 
-System.out.println  "zzzzzzzzzzzzzz in twitter text $text"
-
 //twitter query
 if ( params.get("tw")){
-	System.out.println  "FOund tw " +  params.get("tw")
+	System.out.println  "Twitter Query: " +  params.get("tw")
 	Twitter twitter = getTwitterAuth();
 	Query query = new Query(text + "-filter:retweets");
 	query.setCount(40)
@@ -46,14 +44,15 @@ if (text.startsWith("http") && text.size() < 256) {
 def networkType = params.get("networkType")
 float cooc = params.get("cooc").toFloat()
 int maxLinks = params.get("maxLinks").toInteger()
-System.out.println "***TEXTIN: networkType is $networkType cooc: $cooc maxLinks $maxLinks"
+int maxWords = params.get("maxWords").toInteger()
+
+System.out.println "***TEXTIN: networkType is $networkType cooc: $cooc maxLinks $maxLinks maxWords $maxWords"
 
 def gwl = new GenerateWordLinks()
-
+ 
 def nt = (networkType == "forceNet") ? "graph" : "tree"
 
-
-def	json = gwl.getJSONnetwork(text, nt, cooc, maxLinks)
+def	json = gwl.getJSONnetwork(text, nt, cooc, maxLinks, maxWords)
 
 print json
 

@@ -81,13 +81,17 @@ hr {
 					Enter Twitter query or hashtag: <input type="text" name="twitQ"
 						id="twitQ" size=40 value="word cloud"> <input
 						type="button" value="viz Twitter"
-						onclick="textIn(twitQ.value, true )"> <br />
-						
-						 <br /> Enter URL: <input type="text" id="url"
+						onclick="textIn(twitQ.value, true )"> <br /> <br />
+					Enter URL: <input type="text" id="url"
 						value="https://en.wikipedia.org/wiki/Tag_cloud" size=40>
 
 					<button onclick="textIn(url.value)">viz URL</button>
 					<br />
+
+					<div id="modal">
+						<img id="loader" src="images/ajax-loaderBig.gif" />
+						<div id="fade"></div>
+					</div>
 				</div>
 
 				<div class="col-md-2">
@@ -106,22 +110,21 @@ hr {
 						Force (Network)
 					</form>
 				</div>
-				<div id="modal">
-					<img id="loader" src="images/ajax-loaderBig.gif" />
-					<div id="fade"></div>
-				</div>
+
 
 				<div class="col-md-2 controls">
 
 					<label for="maxLinks">Max Links to Show: </label>
-					<output for="maxLinks" id="maxLinks2">30</output>
+					<output for="maxLinks" id="maxLinks2">30</output>					
 					<input type="range" min="1" max="200" value="30" id="maxLinks"
-						step="1" oninput="outputMaxLinks(value)"> <br> <br>
+						step="1" oninput="outputMaxLinks(value)"> 
+						
+					<br> <br>
 					<label for="maxWords">Max Words to analyse</label>
-					<output for="maxWords" id="maxWords2">30</output>
-
-					<input type="range" min="1" max="200" value="30" id="maxWords"
+					<output for="maxWords" id="maxWords2">50</output>
+					<input type="range" min="1" max="200" value="50" id="maxWords"
 						step="1" oninput="outputMaxWords(value)"> <br> <br>
+
 					<label for="cooc">Power Value: </label>
 					<output for="cooc" id="cooc2">0.5</output>
 
@@ -137,6 +140,7 @@ hr {
 			</div>
 		</div>
 		<div class="row col-md-12">
+
 			<div id="tree-container"></div>
 			<div class="main"></div>
 		</div>
@@ -168,6 +172,10 @@ hr {
 
 		frontPage();
 
+		jQuery('input').click(function() {
+			jQuery(this).select();
+		});
+
 		function openModal() {
 			document.getElementById('modal').style.display = 'block';
 			document.getElementById('fade').style.display = 'block';
@@ -192,9 +200,50 @@ hr {
 
 		function outputMaxWords(maxWordsIn) {
 			document.querySelector('#maxWords2').value = maxWordsIn;
-			maxLinks = document.getElementById("maxWords").value;
+			maxWords = document.getElementById("maxWords").value;
 			console.log("maxWords set: " + maxWords);
 		};
+
+		jQuery('#txta1').keypress(function(event) {
+			var keycode = (event.keyCode ? event.keyCode : event.which);
+			if (keycode == '13') {
+				console.log('You pressed a "enter" key in textbox');
+				textIn(txta1.value);
+			}
+			//Stop the event from propogation to other handlers
+			//If this line will be removed, then keypress event handler attached
+			//at document level will also be triggered
+			event.stopPropagation();
+		});
+		
+	    //Bind keypress event to textbox
+	    jQuery('#twitQ').keypress(function(event) {
+	        var keycode = (event.keyCode ? event.keyCode : event.which);
+	        if (keycode == '13') {
+	            console.log('You pressed a "enter" key in Twitter Q');
+	            textIn(twitQ.value, true);
+	        }
+	        //Stop the event from propogation to other handlers
+	        //If this line will be removed, then keypress event handler attached
+	        //at document level will also be triggered
+	        event.stopPropagation();
+	    });
+
+	    //Bind keypress event to textbox
+	    jQuery('#url').keypress(function(event) {
+	        var keycode = (event.keyCode ? event.keyCode : event.which);
+	        if (keycode == '13') {
+	            console.log('You pressed a "enter" key in url2');
+	            textIn(url.value);
+	        }
+	        //Stop the event from propogation to other handlers
+	        //If this line will be removed, then keypress event handler attached
+	        //at document level will also be triggered
+	        event.stopPropagation();
+	    });
+		
+		
+		
 
 		// can't swap because JSON is different
 		//	jQuery(document).ready(function () {
@@ -255,8 +304,7 @@ hr {
 
 			});
 		};
-		
-		
+
 		closeModal();
 	</script>
 </body>

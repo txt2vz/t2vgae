@@ -24,26 +24,25 @@ class GenerateWordLinks {
 //		getJSONnetwork(s)
 //	}
 
-	String  getJSONnetwork(String s, String netType, Float cin, int maxL) {
+	String  getJSONnetwork(String s, String netType, Float cin, int maxL, int hfq) {
 		networkType = netType
 		this.coocIn = cin
 		this.maxWordPairs=maxL
+		this.highFreqWords=hfq
 		
-		println "in CONSTRUCTOORRR cocoIn  $coocIn maxWordPairs $maxWordPairs"
+		println "**GenerateWordLinks constructor - cocoIn: $coocIn maxWordPairs: $maxWordPairs highFreqWords: $highFreqWords "
 		getJSONnetwork (s)
 		
 	}
 
 	String getJSONnetwork(String s) {
-		println "coocIn 22222:  $coocIn"
-
+	
 		//new File ('athenaBookChapter.txt').text
 		s = s ?: "empty text"
 
 		def words = s.replaceAll(/\W/, "  ").toLowerCase().tokenize().minus(StopSet.stopSet)
 		// smallStopSet2);//  stopSet)
-
-		println "---------------------------******************************"
+		
 		println " words size: " + words.size() + " unique words " + words.unique(false).size()
 
 		def stemmer = new PorterStemmer()
