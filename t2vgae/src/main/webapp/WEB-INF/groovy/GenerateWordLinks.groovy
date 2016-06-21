@@ -1,48 +1,47 @@
-
 import PorterStemmer;
+import StopSet;
 import java.util.Map
 
 import groovy.json.*
 import groovy.transform.*
-import StopSet;
 
 class GenerateWordLinks {
 
 	def highFreqWords = 80
 	def maxWordPairs = 40
-    def coocIn = 0.5
+	def coocIn = 0.5
 	String networkType = "tree"
 
-//	String getJSONnetwork(String s, int hfq, int mwp){
-//		this.highFreqWords=hfq
-//		this.maxWordPairs=mwp
-//		getJSONnetwork(s)
-//	}
-//
-//	String getJSONnetwork(String s, int mwp){
-//		this.maxWordPairs=mwp
-//		getJSONnetwork(s)
-//	}
+	//	String getJSONnetwork(String s, int hfq, int mwp){
+	//		this.highFreqWords=hfq
+	//		this.maxWordPairs=mwp
+	//		getJSONnetwork(s)
+	//	}
+	//
+	//	String getJSONnetwork(String s, int mwp){
+	//		this.maxWordPairs=mwp
+	//		getJSONnetwork(s)
+	//	}
 
 	String  getJSONnetwork(String s, String netType, Float cin, int maxL, int hfq) {
 		networkType = netType
 		this.coocIn = cin
 		this.maxWordPairs=maxL
 		this.highFreqWords=hfq
-		
+
 		println "**GenerateWordLinks constructor - cocoIn: $coocIn maxWordPairs: $maxWordPairs highFreqWords: $highFreqWords "
 		getJSONnetwork (s)
-		
+
 	}
 
 	String getJSONnetwork(String s) {
-	
+
 		//new File ('athenaBookChapter.txt').text
 		s = s ?: "empty text"
 
 		def words = s.replaceAll(/\W/, "  ").toLowerCase().tokenize().minus(StopSet.stopSet)
 		// smallStopSet2);//  stopSet)
-		
+
 		println " words size: " + words.size() + " unique words " + words.unique(false).size()
 
 		def stemmer = new PorterStemmer()
@@ -80,24 +79,32 @@ class GenerateWordLinks {
 			wordToPositionsMap.drop(index + 1).each { b ->
 				def w0 = a.getKey()
 				def w1 = b.getKey()
-				def coocValue = getCooc(a.getValue(), b.getValue())
+				//		if (index < 3)
+				//			println "a $a a.value " + a.value + "  a.value.size " + a.value.size
+				def coocValue = getCooc(a.value, b.value)
+			//	def minF = Math.min(a.value.size,  b.value.size)
 
+			//	def srtVal =   minF * coocValue
+				//totalF* coocValue
 				wordPairList << new WordPair(word0: w0, word1: w1, cooc: coocValue)
+
+				//wordPairList << new WordPair(word0: w0, word1: w1, cooc: coocValue, sortVal: srtVal)
 			}
 		}
 
 		wordPairList = wordPairList.sort { -it.cooc }
+		//wordPairList = wordPairList.sort { -it.sortVal }
 		println "wordPairList take 5: " + wordPairList.take(5)
 
 		wordPairList = wordPairList.take(maxWordPairs)
 		//def json = getJSONgraph(wordPairList, stemInfo)
 		def json;
-		
+
 		if (networkType == "tree")
 			json = getJSONtree(wordPairList, stemInfo)
 		else
 			json= getJSONgraph(wordPairList, stemInfo)
-			
+
 		println "json is $json"
 		return json
 	}
@@ -108,7 +115,7 @@ class GenerateWordLinks {
 
 			links: wl.collect {
 
-				def src = stemMap[it.word0].max { it.value }.key				
+				def src = stemMap[it.word0].max { it.value }.key
 				def tgt = stemMap[it.word1].max { it.value }.key
 
 				[source: src,
@@ -125,73 +132,63 @@ class GenerateWordLinks {
 	private String getJSONtree( List wl, Map stemMap){
 		def tree= [:]
 
+
 		wl.collect {
-			def src =    stemMap[it.word0].max { it.value }.key
-			def target = stemMap[it.word1].max { it.value }.key
+			def word0 =    stemMap[it.word0].max { it.value }.key
+			def word1 = stemMap[it.word1].max { it.value }.key
 
 			if (tree.isEmpty()){
 				tree <<
-						[name: src,
-							children: [[name: target]]]			
-						addedNodes.add(src)
-						addedChildren.add(target)
-						
+						[name: word0, cooc: it.cooc,
+							children: [[name: word1]]]
+				internalNodes.add(word0)
+				//addedChildren.add(word1)
 			}
 			else {
-				addPairToMap(tree, src, target)
-				addPairToMap(tree, target, src)
+				addPairToMap(tree, word0, word1, it.cooc)
+				addPairToMap(tree, word1, word0, it.cooc)
 			}
 		}
 		def json = new JsonBuilder(tree)
 		return json
 	}
 
-	def addedNodes = [] as Set
-	def addedChildren = [] as Set
+	def internalNodes = [] as Set
+	//def addedChildren = [] as Set
 
-	private void addPairToMap (Map m, String source, String target){
+	private void addPairToMap (Map m, String w0, String w1, def cooc){
 
-		assert source !=target
+		assert w0 !=w1
 
 		m.each {
 
 			if (it.value in List ){
 				it.value.each{
 					assert it in Map
-
-					addPairToMap(it, source, target)
+					addPairToMap(it, w0, w1, cooc)
 				}
 			}else{
 
-				if (it.value == target){
-					//println "skipping it.value ${it.value} source $source target $target"
-				} else {
+				if (it.value ==w0) {
 
-					if (it.value ==source) {
+					//	println "it.value ${it.value} w0 $w0 it $it m $m m.children ${m.children} internalNodes $internalNodes "
 
-						if (m.children  && ! addedNodes.contains(target)){
-							if (addedChildren.add(target)){
-								m.children << ["name": target]
-							}
-						}else{
-							//do not create a new node if one already exists
-							if (addedNodes.add( it.value) && ! addedNodes.contains(target) && ! addedChildren.contains(target)  ){
+					//the node has children.  Check the other word is not also an internal node
+					if (m.children  && ! internalNodes.contains(w1)){
+						//if (addedChildren.add(w1)){
+						m.children << ["name": w1]
+						//}
+					}else{
+						//do not create a new node if one already exists
+						if ( internalNodes.add( it.value) && ! internalNodes.contains(w1) ){
 
-							//	println "adding " + it.value + " to added $addedNodes"
-								addedChildren.add(target)
-
-								m  << ["name": it.value, "children": [["name" : target]]]
-							}
-							else {
-								//println "already added so skipping source $source target $target it.value " + it.value
-							}
+							m  << ["name": it.value, , "cooc": cooc, "children": [["name" : w1]]]
 						}
 					}
 				}
 			}
 		}
 	}
-
 
 	//powers for 0.9
 	def final powers = [
@@ -213,7 +210,7 @@ class GenerateWordLinks {
 	]
 
 	private def getCooc(List w0Positions, List w1Positions) {
-		final int MAX_DISTANCE = 10;
+		final int MAX_DISTANCE = 20;
 		def coocVal =
 				[w0Positions, w1Positions].combinations().collect
 				{ a, b -> Math.abs(a - b) - 1 }
@@ -235,7 +232,7 @@ class GenerateWordLinks {
 	}
 
 	def final static mAli =
-			'''
+	'''
 “I am America. I am the part you won’t recognise. But get used to me – black, confident, cocky; my name, not yours; my religion, not yours; my goals, my own. Get used to me.”
 Muhammad Ali: the man behind the icon Read moreMuhammad Ali loved the sound of his own voice, and so did everyone else. His words were predictably impossible to top on Saturday, as America mourned the loss of a colossus not only in the boxing ring but the arenas of politics, religion and popular culture.
 Born in the south before Rosa Parks refused to give up her seat for a white bus passenger, he died at the age of 74, having seen the first African American elected to the White House. Barack Obama led tributes to the incandescent athlete, activist, humanitarian, poet and showman with a statement that caught the mood of many.

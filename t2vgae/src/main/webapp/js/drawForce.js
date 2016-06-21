@@ -4,8 +4,9 @@ function drawForce(json) {
 
 	d3.select("svg").remove();
 
-	var force = d3.layout.force().linkDistance(80).charge(-120).gravity(.05)
-			.size([ width, height ]).on("tick", tick);
+	var force = d3.layout.force().linkDistance(80).charge(-200).gravity(.05)
+			.size([ width, height ]).on("tick", tick);	
+
 
 	var svg = d3.select("body").append("svg").attr("width", width).attr(
 			"height", height);
@@ -53,6 +54,7 @@ function drawForce(json) {
 		});
 
 		node.select("circle").style("fill", color);
+		node.select("circle").style("opacity", opacity);
 	}
 
 	function tick() {
@@ -76,6 +78,13 @@ function drawForce(json) {
 		: d._children ? "blueviolet" //"#3182bd" // collapsed package
 		: d.children ? "aqua"//"#c6dbef" // expanded package
 		: "magenta";//"#fd8d3c"; // leaf node
+	}
+	
+	function opacity(d) { 
+		return  d.name == root.name ? 0.9
+		: d._children ? 0.8 //"#3182bd" // collapsed package
+		: d.children ? 0.5//"#c6dbef" // expanded package
+		: 0.2;//"#fd8d3c"; // leaf node 
 	}
 
 	// Toggle children on click.
