@@ -86,7 +86,7 @@ hr {
 						value="https://en.wikipedia.org/wiki/Tag_cloud" size=40>
 
 					<button onclick="textIn(url.value)">viz URL</button>
-					<br />		
+					<br />
 
 					<div id="modal">
 						<img id="loader" src="images/ajax-loaderBig.gif" />
@@ -94,31 +94,22 @@ hr {
 					</div>
 				</div>
 
-
 				<div class="col-md-2">
-					Show Tree:
-					<form id="expanded">
-						<input type="radio" id="full" name="type" value="full">
-						Fully Expanded <br /> <input type="radio" id="oneLevel"
-							name="type" value="oneLevel" checked="true"> One Level
-					</form>
+							
 					<br> Network Type:
-
 					<form id="networkType">
 						<input type="radio" id="radial" name="nt" value="radial"
 							checked="true"> Radial (tree)<br /> <input type="radio"
-							id="forceTree" name="nt" value="forceTree"> Force (Tree)
+							id="forceTree" name="nt" value="forceTree"> Force (tree)
 						<br /> <input type="radio" id="forceNet" name="nt"
-							value="forceNet"> Force (Network) <br />
+							value="forceNet"> Force (network) <br />
 						<input type="radio" id="dendro" name="nt" value="dendro">
 						Dendrogram (tree)<br />
 
 					</form>
 				</div>
 
-
 				<div class="col-md-2 controls">
-
 					<label for="maxWords">Max Words</label>
 					<output for="maxWords" id="maxWords2">100</output>
 					<input type="range" min="1" max="1000" value="50" id="maxWords"
@@ -133,7 +124,6 @@ hr {
 					<output for="cooc" id="cooc2">0.5</output>
 					<input type="range" min="0.05" max="0.95" value="0.5" id="cooc"
 						step="0.05" oninput="outputCooc(value)">
-
 				</div>
 			</div>
 		</div>
@@ -145,7 +135,7 @@ hr {
 
 		<div class="navbar navbar-fixed-bottom"
 			style="font-family: arial; font-size: 10px; background-color: white;">
-			By Laurie Hirsch Info: <a
+			By Laurie Hirsch. Info: <a
 				href="https://plus.google.com/u/0/b/117816592489907408686/117816592489907408686/about"
 				target="_blank">txt2vz</a>
 		</div>
@@ -160,7 +150,6 @@ hr {
 
 	<script src="js/colorbrewer.js"></script>
 	<script src="js/frontPage.js"></script>
-
 
 	<script>
 		var cooc = 0.5;
@@ -233,7 +222,7 @@ hr {
 		jQuery('#url').keypress(function(event) {
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if (keycode == '13') {
-				console.log('You pressed a "enter" key in url2');
+				//console.log('You pressed a "enter" key in url2');
 				textIn(url.value);
 			}
 			//Stop the event from propogation to other handlers

@@ -71,7 +71,7 @@ class GenerateWordLinks {
 		//wordToFormsMap = wordToFormsMap.drop(wordToFormsMap.size() - highFreqWords)
 		wordToPositionsMap = wordToPositionsMap.take(highFreqWords)
 
-		println "after take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
+		//println "after take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
 
 		def wordPairList = []
 
@@ -105,7 +105,7 @@ class GenerateWordLinks {
 		else
 			json= getJSONgraph(wordPairList, stemInfo)
 
-		println "json is $json"
+		//println "json is $json"
 		return json
 	}
 
