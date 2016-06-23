@@ -135,7 +135,7 @@ hr {
 
 		<div class="navbar navbar-fixed-bottom"
 			style="font-family: arial; font-size: 10px; background-color: white;">
-			By Laurie Hirsch. Info: <a
+			By Laurie Hirsch Info: <a
 				href="https://plus.google.com/u/0/b/117816592489907408686/117816592489907408686/about"
 				target="_blank">txt2vz</a>
 		</div>
@@ -178,7 +178,7 @@ hr {
 		function outputCooc(coocIn) {
 			document.querySelector('#cooc2').value = coocIn;
 			cooc = document.getElementById("cooc").value;
-		//	console.log("cooc set: " + cooc);
+			console.log("cooc set: " + cooc);
 		}
 
 		function outputMaxLinks(maxLinksIn) {
@@ -244,11 +244,11 @@ hr {
 	</script>
 
 	<script>
-		function draw(jsonData) {
+		function draw(jsonData) { 
 			jsonDataTemp = jsonData;
 
 			//console.log("data back from draw " + jsonData);
-			oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
+			//oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
 
 			if (networkType == "forceNet")
 				drawLinks(jsonData);
@@ -258,7 +258,7 @@ hr {
 			else if (networkType == "radial")
 				drawRadial(jsonData)
 			else
-				drawDendrogram;
+				drawDendrogram(jsonData);
 		};
 
 		function setNetworkType() {
@@ -289,7 +289,6 @@ hr {
 					draw(jsonData);
 					closeModal();
 				},
-
 			});
 		};
 

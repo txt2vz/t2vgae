@@ -2,7 +2,7 @@ function drawRadial(json) {
 
 	// var width = 960, height = 960, root;
 	root = JSON.parse(json);
-	console.log ("root " + root.name);
+	console.log ("root in radial" + root.name);
 	d3.select("svg").remove();
 
 	var diameter = 960;
@@ -26,8 +26,7 @@ function drawRadial(json) {
 	
 	function update () {
 	// if (error) throw error;
-	//var nodes = flatten(root), links = d3.layout.tree().links(nodes);
-		console.log("in updat radial root.name " + root.name);
+		//console.log("in updat radial root.name " + root.name);
 
 	  var nodes = tree.nodes(root),
 	      links = tree.links(nodes);
@@ -55,5 +54,4 @@ function drawRadial(json) {
 	}; 
 
 	d3.select(self.frameElement).style("height", diameter - 150 + "px");
-
 }

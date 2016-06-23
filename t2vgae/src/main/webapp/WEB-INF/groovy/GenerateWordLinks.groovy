@@ -12,17 +12,6 @@ class GenerateWordLinks {
 	def coocIn = 0.5
 	String networkType = "tree"
 
-	//	String getJSONnetwork(String s, int hfq, int mwp){
-	//		this.highFreqWords=hfq
-	//		this.maxWordPairs=mwp
-	//		getJSONnetwork(s)
-	//	}
-	//
-	//	String getJSONnetwork(String s, int mwp){
-	//		this.maxWordPairs=mwp
-	//		getJSONnetwork(s)
-	//	}
-
 	String  getJSONnetwork(String s, String netType, Float cin, int maxL, int hfq) {
 		networkType = netType
 		this.coocIn = cin
@@ -31,7 +20,6 @@ class GenerateWordLinks {
 
 		println "**GenerateWordLinks constructor - cocoIn: $coocIn maxWordPairs: $maxWordPairs highFreqWords: $highFreqWords "
 		getJSONnetwork (s)
-
 	}
 
 	String getJSONnetwork(String s) {
@@ -71,7 +59,7 @@ class GenerateWordLinks {
 		//wordToFormsMap = wordToFormsMap.drop(wordToFormsMap.size() - highFreqWords)
 		wordToPositionsMap = wordToPositionsMap.take(highFreqWords)
 
-		//println "after take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
+		println "after take wordposmap $wordToPositionsMap  wortopositmap.size " + wordToPositionsMap.size()
 
 		def wordPairList = []
 
@@ -79,13 +67,12 @@ class GenerateWordLinks {
 			wordToPositionsMap.drop(index + 1).each { b ->
 				def w0 = a.getKey()
 				def w1 = b.getKey()
-				//		if (index < 3)
-				//			println "a $a a.value " + a.value + "  a.value.size " + a.value.size
-				def coocValue = getCooc(a.value, b.value)
-			//	def minF = Math.min(a.value.size,  b.value.size)
 
-			//	def srtVal =   minF * coocValue
-				//totalF* coocValue
+				def coocValue = getCooc(a.value, b.value)
+				//def minF = Math.min(a.value.size,  b.value.size)
+
+				//makes a better tree - more branches?  Needs testing.
+				//def srtVal =   minF * coocValue
 				wordPairList << new WordPair(word0: w0, word1: w1, cooc: coocValue)
 
 				//wordPairList << new WordPair(word0: w0, word1: w1, cooc: coocValue, sortVal: srtVal)
@@ -105,7 +92,7 @@ class GenerateWordLinks {
 		else
 			json= getJSONgraph(wordPairList, stemInfo)
 
-		//println "json is $json"
+		println "json is $json"
 		return json
 	}
 
@@ -129,6 +116,7 @@ class GenerateWordLinks {
 		return json
 	}
 
+	def internalNodes = [] as Set
 	private String getJSONtree( List wl, Map stemMap){
 		def tree= [:]
 
@@ -142,7 +130,6 @@ class GenerateWordLinks {
 						[name: word0, cooc: it.cooc,
 							children: [[name: word1]]]
 				internalNodes.add(word0)
-				//addedChildren.add(word1)
 			}
 			else {
 				addPairToMap(tree, word0, word1, it.cooc)
@@ -152,9 +139,6 @@ class GenerateWordLinks {
 		def json = new JsonBuilder(tree)
 		return json
 	}
-
-	def internalNodes = [] as Set
-	//def addedChildren = [] as Set
 
 	private void addPairToMap (Map m, String w0, String w1, def cooc){
 
@@ -169,15 +153,13 @@ class GenerateWordLinks {
 				}
 			}else{
 
-				if (it.value ==w0) {
-
-					//	println "it.value ${it.value} w0 $w0 it $it m $m m.children ${m.children} internalNodes $internalNodes "
+				if (it.value == w0) {
 
 					//the node has children.  Check the other word is not also an internal node
 					if (m.children  && ! internalNodes.contains(w1)){
-						//if (addedChildren.add(w1)){
+
 						m.children << ["name": w1]
-						//}
+
 					}else{
 						//do not create a new node if one already exists
 						if ( internalNodes.add( it.value) && ! internalNodes.contains(w1) ){
@@ -188,6 +170,22 @@ class GenerateWordLinks {
 				}
 			}
 		}
+	}
+
+	private def getCooc(List w0Positions, List w1Positions) {
+		final int MAX_DISTANCE = 20;
+		def coocVal =
+				[w0Positions, w1Positions].combinations().collect
+				{ a, b -> Math.abs(a - b) - 1 }
+				.findAll { it <= MAX_DISTANCE }
+				.sum {
+					//lookup table should be faster
+					//powers[it]
+					//Math.pow(0.5, it)
+					Math.pow(coocIn, it)
+				}
+
+		return coocVal ?: 0.0;
 	}
 
 	//powers for 0.9
@@ -208,26 +206,10 @@ class GenerateWordLinks {
 		13: 0.254186583,
 		14: 0.228767925
 	]
-
-	private def getCooc(List w0Positions, List w1Positions) {
-		final int MAX_DISTANCE = 20;
-		def coocVal =
-				[w0Positions, w1Positions].combinations().collect
-				{ a, b -> Math.abs(a - b) - 1 }
-				.findAll { it <= MAX_DISTANCE }
-				.sum {
-					//powers[it]
-					//Math.pow(0.5, it)
-					Math.pow(coocIn, it)
-				}
-
-		return coocVal ?: 0.0;
-	}
-
 	static main(args) {
 		def gwl = new GenerateWordLinks()
 		//y.getWordPairs("""houses tonight  houses tonight content contents contents housed house houses housed zoo zoo2""")
-		//println y.getWordPairs("abc def")
+		
 		gwl.getJSONnetwork(mAli)
 	}
 

@@ -1,4 +1,6 @@
+
 import org.jsoup.Jsoup
+
 import twitter4j.*
 import twitter4j.conf.*;
 
@@ -33,12 +35,15 @@ if ( params.get("tw")){
 	}
 	System.out.println( "twCount : $twCount" )
 	text = twitterText
-} else 
+} else
 
 // should use apache commons URLValidator
 if (text.startsWith("http") && text.size() < 256) {
 	def url = text.toURL()
 	text = Jsoup.parse(url.getText()).text()
+	
+	//Tika tika = new Tika();
+	//text = tika.parseToString(url)
 }
 
 def networkType = params.get("networkType")
@@ -49,21 +54,19 @@ int maxWords = params.get("maxWords").toInteger()
 System.out.println "***TEXTIN: networkType is $networkType cooc: $cooc maxLinks $maxLinks maxWords $maxWords"
 
 def gwl = new GenerateWordLinks()
- 
+   
 def nt = (networkType == "forceNet") ? "graph" : "tree"
 
 def	json = gwl.getJSONnetwork(text, nt, cooc, maxLinks, maxWords)
-
 print json
 
 private Twitter getTwitterAuth(){
 
 	ConfigurationBuilder cb = new ConfigurationBuilder();
 	cb.setDebugEnabled(true)
-			.setOAuthConsumerKey("u59ay8TtPUn5p9VTHxdFg")
-			.setOAuthConsumerSecret("LOkS2Vl9KTWXH5VMuwhb9RfIcXBXzkvyzzwD0HQtr14")
-			.setOAuthAccessToken("560297710-4UmsMLOILUgIkLx6V5mdH1lbvG8ew8xvQm5YgBhY")
-			.setOAuthAccessTokenSecret("mlwDtpbx9bUKTTk4wpBYVdUagGmBX6bzAYJbktoNM");
+	
+	//**keys
+	
 	TwitterFactory tf = new TwitterFactory(cb.build());
 	Twitter twitter = tf.getInstance();
 

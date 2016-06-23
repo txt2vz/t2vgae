@@ -4,7 +4,7 @@ function drawForce(json) {
 
 	d3.select("svg").remove();
 
-	var force = d3.layout.force().linkDistance(80).charge(-200).gravity(.05)
+	var force = d3.layout.force().linkDistance(120).charge(-200).gravity(.05)
 			.size([ width, height ]).on("tick", tick);	
 
 
@@ -14,14 +14,14 @@ function drawForce(json) {
 	var link = svg.selectAll(".link"), node = svg.selectAll(".node");
 
 	root = JSON.parse(json);
-	console.log ("root " + root.name);
+	console.log ("root in drawForce" + root.name);
 
 	update();
 
 	function update() {
 		var nodes = flatten(root), links = d3.layout.tree().links(nodes);
 		
-		console.log ("nodes " + nodes);
+		//console.log ("nodes " + nodes);
 
 		// Restart the force layout.
 		force.nodes(nodes).links(links).start();
@@ -85,7 +85,7 @@ function drawForce(json) {
 		: d._children ? 0.8 //"#3182bd" // collapsed package
 		: d.children ? 0.5//"#c6dbef" // expanded package
 		: 0.2;//"#fd8d3c"; // leaf node 
-	}
+	} 
 
 	// Toggle children on click.
 	function click(d) {
@@ -116,5 +116,4 @@ function drawForce(json) {
 		recurse(root);
 		return nodes;
 	}
-
 };

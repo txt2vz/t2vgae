@@ -29,7 +29,7 @@ appcfg {
 		passIn = true	
 	
 		app { id = 'txt2vz'
-			  version =20
+			  version =21
 		}
 	
 		logs {

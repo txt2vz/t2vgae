@@ -1,5 +1,5 @@
 function frontPage() {
-	console.log("in front page");
+	//console.log("in front page");
 	var jl = {};
 	jl.links = [ {
 		'source' : 'txt2vz',
