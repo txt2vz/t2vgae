@@ -1,3 +1,5 @@
+
+
 import PorterStemmer;
 import StopSet;
 import java.util.Map
@@ -24,7 +26,7 @@ class GenerateWordLinks {
 
 	String getJSONnetwork(String s) {
 
-		//new File ('athenaBookChapter.txt').text
+		//s=new File ('athenaBookChapter.txt').text
 		s = s ?: "empty text"
 
 		def words = s.replaceAll(/\W/, "  ").toLowerCase().tokenize().minus(StopSet.stopSet)
@@ -36,7 +38,7 @@ class GenerateWordLinks {
 		def stemInfo = [:] //stemmed word is key and value is a map of a particular word form and its frequency
 		def wordToPositionsMap = [:] //stemmed word is key and value is a list of positions where any of the words occur
 
-		words.findAll { it.size() > 1 }
+		words.findAll { it.size() > 2 }
 		.eachWithIndex { it, indexWordPosition ->
 
 			def stemmedWord = stemmer.stem(it)
@@ -81,7 +83,11 @@ class GenerateWordLinks {
 
 		wordPairList = wordPairList.sort { -it.cooc }
 		//wordPairList = wordPairList.sort { -it.sortVal }
-		println "wordPairList take 5: " + wordPairList.take(5)
+		println "wordPairList take 5: " + wordPairList.take(30)
+
+		//	wordPairList.each{
+		//		println " ${it.word0} ${it.word1} ${it.cooc}  ${it.sortVal}   "
+		//	}
 
 		wordPairList = wordPairList.take(maxWordPairs)
 		//def json = getJSONgraph(wordPairList, stemInfo)
@@ -117,6 +123,7 @@ class GenerateWordLinks {
 	}
 
 	def internalNodes = [] as Set
+	def allNodes = [] as Set
 	private String getJSONtree( List wl, Map stemMap){
 		def tree= [:]
 
@@ -130,6 +137,8 @@ class GenerateWordLinks {
 						[name: word0, cooc: it.cooc,
 							children: [[name: word1]]]
 				internalNodes.add(word0)
+				allNodes.add(word0)
+				allNodes.add(word1)
 			}
 			else {
 				addPairToMap(tree, word0, word1, it.cooc)
@@ -153,17 +162,17 @@ class GenerateWordLinks {
 				}
 			}else{
 
-				if (it.value == w0) {
+				if (it.value == w0  &&  allNodes.add(w1))  {
 
 					//the node has children.  Check the other word is not also an internal node
-					if (m.children  && ! internalNodes.contains(w1)){
+					if (m.children  && ! internalNodes.contains(w1) ){
 
 						m.children << ["name": w1]
 
 					}else{
-						//do not create a new node if one already exists
-						if ( internalNodes.add( it.value) && ! internalNodes.contains(w1) ){
 
+						//do not create a new internal node if one already exists
+						if (internalNodes.add( it.value)) {
 							m  << ["name": it.value, , "cooc": cooc, "children": [["name" : w1]]]
 						}
 					}
@@ -209,7 +218,7 @@ class GenerateWordLinks {
 	static main(args) {
 		def gwl = new GenerateWordLinks()
 		//y.getWordPairs("""houses tonight  houses tonight content contents contents housed house houses housed zoo zoo2""")
-		
+
 		gwl.getJSONnetwork(mAli)
 	}
 
