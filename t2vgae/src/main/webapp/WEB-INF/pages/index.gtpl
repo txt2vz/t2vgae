@@ -1,36 +1,12 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-	rel="stylesheet">
-
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
 <style type="text/css">
-.node {
-	cursor: pointer;
-}
-
 .overlay {
 	background-color: #FFF;
-}
-
-.node circle {
-	fill: blueviolet;
-	stroke: steelblue;
-	stroke-width: 1.5px;
-}
-
-.node text {
-	font-size: 14px;
-	font-family: sans-serif;
-}
-
-.link {
-	fill: none;
-	stroke: #ccc;
-	stroke-width: 1.5px;
 }
 
 line.link {
@@ -48,16 +24,59 @@ output {
 	display: inline;
 }
 
-hr {
-	background-color: blue;
-	height: 1px;
-	border: 0;
-}
-
 .well {
 	background-color: #e6fff2;
 }
+
+html {
+	display: table;
+	margin: auto;
+}
+
+#vis {
+	width: 1260px;
+	height: 1000px;
+}
+
+.node {
+	cursor: pointer;
+}
+
+.node.leaf {
+	cursor: default;
+}
+
+.node circle {
+	fill: mediumslateblue;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+.node.leaf circle {
+	fill: #fff;
+}
+
+.node text {
+	font-size: 12px;
+	font: bold;
+	font-family: sans-serif;
+}
+
+.link {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 1.5px;
+}
+
+.rhlink {
+    float: right;
+    width: 300px;
+    padding: 10px;
+    font-size: 10px;
+	font: italic;
+}
 </style>
+</head>
 <title>txt2vz</title>
 
 <body>
@@ -68,25 +87,38 @@ hr {
 					style="color: blueviolet">t</span><span style="color: cyan">xt</span><span
 					style="color: magenta">2</span><span style="color: cyan">vz</span></b></em>
 		</a>
-		<div class="well col-md-12">
+		<button type="button" class="btn btn-info" data-toggle="collapse"
+			data-target="#control2">Show/Hide controls/selections</button>
+		<span class="rhlink">
+			<a href="http://txt2vz-lauriehirsch.rhcloud.com/" target="_blank">
+				txt2vz with file upload</a>
+		</span>
+		<div id="control2" class="collapse in well">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-3">
 
-					<textarea id="txta1" COLS="40" ROWS="6"
+					<textarea id="txta1" COLS="37" ROWS="6"
 						placeholder="Type or paste text here"></textarea>
 					<br> <input type="button" value="viz text"
-						onclick="textIn(txta1.value)">
+						class="btn btn-primary" onclick="textIn(txta1.value)">
 				</div>
-				<div class="col-md-4">
-					Enter Twitter query or hashtag: <input type="text" name="twitQ"
-						id="twitQ" size=40 value="word cloud"> <input
-						type="button" value="viz Twitter"
-						onclick="textIn(twitQ.value, true )"> <br /> <br />
-					Enter URL: <input type="text" id="url"
+				<div class="col-md-5">
+					<div>
+						<div>Enter Twitter query or hashtag:</div>
+						<input type="text" name="twitQ" id="twitQ" size=40
+							value="word cloud"> <input type="button"
+							class="btn btn-primary" value="viz Twitter"
+							onclick="textIn(twitQ.value, true )">
+					</div>
+
+					<div>Enter URL:</div>
+					<input type="text" id="url"
 						value="https://en.wikipedia.org/wiki/Tag_cloud" size=40>
 
-					<button onclick="textIn(url.value)">viz URL</button>
-					<br />
+					<button onclick="textIn(url.value)" class="btn btn-primary">viz
+						URL</button>
+
+
 
 					<div id="modal">
 						<img id="loader" src="images/ajax-loaderBig.gif" />
@@ -95,15 +127,14 @@ hr {
 				</div>
 
 				<div class="col-md-2">
-							
 					<br> Network Type:
 					<form id="networkType">
 						<input type="radio" id="radial" name="nt" value="radial"
 							checked="true"> Radial (tree)<br /> <input type="radio"
 							id="forceTree" name="nt" value="forceTree"> Force (tree)
 						<br /> <input type="radio" id="forceNet" name="nt"
-							value="forceNet"> Force (network) <br />
-						<input type="radio" id="dendro" name="nt" value="dendro">
+							value="forceNet"> Force (network) <br /> <input
+							type="radio" id="dendro" name="nt" value="dendro">
 						Dendrogram (tree)<br />
 
 					</form>
@@ -126,11 +157,11 @@ hr {
 						step="0.05" oninput="outputCooc(value)">
 				</div>
 			</div>
+
 		</div>
 		<div class="row col-md-12">
-
-			<div id="tree-container"></div>
 			<div class="main"></div>
+			<div id="vis"></div>
 		</div>
 
 		<div class="navbar navbar-fixed-bottom"
@@ -140,9 +171,10 @@ hr {
 				target="_blank">txt2vz</a>
 		</div>
 	</div>
-
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
 	<script src="js/drawForce.js"></script>
 	<script src="js/drawDendrogram.js"></script>
 	<script src="js/drawLinks.js"></script>
@@ -150,6 +182,19 @@ hr {
 
 	<script src="js/colorbrewer.js"></script>
 	<script src="js/frontPage.js"></script>
+
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.12.5/js/vendor/jquery.ui.widget.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.12.5/js/jquery.fileupload.min.js"></script>
+
+
+	<script
+		src="https://rawgit.com/misoproject/d3.chart/master/d3.chart.min.js"></script>
+	<script
+		src="https://rawgit.com/bansaghi/d3.chart.layout.hierarchy/master/d3.chart.layout.hierarchy.js"></script>
+
+
 
 	<script>
 		var cooc = 0.5;
@@ -178,7 +223,7 @@ hr {
 		function outputCooc(coocIn) {
 			document.querySelector('#cooc2').value = coocIn;
 			cooc = document.getElementById("cooc").value;
-			console.log("cooc set: " + cooc);
+			//console.log("cooc set: " + cooc);
 		}
 
 		function outputMaxLinks(maxLinksIn) {
@@ -199,9 +244,6 @@ hr {
 				//console.log('You pressed a "enter" key in textbox');
 				textIn(txta1.value);
 			}
-			//Stop the event from propogation to other handlers
-			//If this line will be removed, then keypress event handler attached
-			//at document level will also be triggered
 			event.stopPropagation();
 		});
 
@@ -212,9 +254,6 @@ hr {
 				//console.log('You pressed a "enter" key in Twitter Q');
 				textIn(twitQ.value, true);
 			}
-			//Stop the event from propogation to other handlers
-			//If this line will be removed, then keypress event handler attached
-			//at document level will also be triggered
 			event.stopPropagation();
 		});
 
@@ -222,41 +261,49 @@ hr {
 		jQuery('#url').keypress(function(event) {
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if (keycode == '13') {
-				//console.log('You pressed a "enter" key in url2');
 				textIn(url.value);
 			}
-			//Stop the event from propogation to other handlers
-			//If this line will be removed, then keypress event handler attached
-			//at document level will also be triggered
 			event.stopPropagation();
 		});
-
-		// can't swap because JSON is different
-		//	jQuery(document).ready(function () {
-		//		jQuery('input[type=radio][name=nt]').change (function() {
-		//			if (jsonDataTemp) {
-		//				console.log ("change network type");
-		//				setNetworkType();
-		//				draw(jsonDataTemp);
-		//			}				
-		//		});
-		//	});
 	</script>
 
 	<script>
-		function draw(jsonData) { 
-			jsonDataTemp = jsonData;
+		//http://bl.ocks.org/bansaghi/f3cbb5e7b759b6a58aff
+		//radial zoomable collapsible
+		function radialZC(jsonText) {
 
-			//console.log("data back from draw " + jsonData);
-			//oneLevel = jQuery('input[name=type]:checked', '#expanded').val() == "oneLevel";
+			var json = JSON.parse(jsonText);
+			{
+
+				d3.select("svg").remove();
+				var tree = d3.select("#vis").append("svg")
+
+				.chart("tree.radial")
+
+				//.diameter(500)
+				.radius(function(d) {
+					if (d.size)
+						return Math.log(d.size);
+					else
+						return 5;
+				}).levelGap(100).zoomable([ 0.1, 3 ]).collapsible(3);
+				//.duration(200)
+				//.sortable("_ASC_") 	
+
+				tree.draw(json);
+			}
+			;
+		};
+
+		function draw(jsonData) {
+			jsonDataTemp = jsonData;
 
 			if (networkType == "forceNet")
 				drawLinks(jsonData);
-
 			else if (networkType == "forceTree")
 				drawForce(jsonData);
 			else if (networkType == "radial")
-				drawRadial(jsonData)
+				radialZC(jsonData);
 			else
 				drawDendrogram(jsonData);
 		};
@@ -285,7 +332,6 @@ hr {
 				},
 				success : function(jsonData, textStatus, jqXHR) {
 
-					//console.log("jsonData back from draw " + jsonData);
 					draw(jsonData);
 					closeModal();
 				},
