@@ -282,9 +282,9 @@ html {
 
 				//.diameter(500)
 				.radius(function(d) {
-					if (d.size)
-						return Math.log(d.size);
-					else
+			//		if (d.size)
+				//		return Math.log(d.size);
+				//	else
 						return 5;
 				}).levelGap(100).zoomable([ 0.1, 3 ]).collapsible(3);
 				//.duration(200)
