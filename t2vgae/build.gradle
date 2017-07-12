@@ -1,70 +1,87 @@
-apply plugin: 'war'
-apply plugin: 'gaelyk'
-apply plugin: 'appengine-geb'
-
-def compatibilityVersion = 1.7
-sourceCompatibility = compatibilityVersion
-targetCompatibility = compatibilityVersion
-
 buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.6'
-        classpath 'org.gradle.api.plugins:gradle-appengine-geb-plugin:0.4'
-    }
+	// Configuration for building
+	repositories {
+		jcenter()    // Bintray's repository - a fast Maven Central mirror & more
+		mavenCentral()
+	}
+	dependencies { classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'    // latest App Engine Gradle tasks
+	}
 }
 
 repositories {
-    mavenCentral()
-    jcenter()
+	// repositories for Jar's you access in your code
+	maven { url 'https://maven-central.storage.googleapis.com'             // Google's mirror of Maven Central
+		//   url 'https://oss.sonatype.org/content/repositories/snapshots' // SNAPSHOT Repository (if needed)
+	}
+	jcenter()
+	mavenCentral()
 }
 
-appcfg {
-	
-		email = '**@gmail.com'
-		passIn = true	
-	
-		app { id = 'txt2vz'
-			  version =22
-		}
-	
-		logs {
-			severity = 1
-			outputFile = file('mylogs.txt')
-		}
-	}
+apply plugin: 'groovy'
+apply plugin: 'war'                               // standard Web Archive plugin
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
 
 dependencies {
-    def gaeVersion = '1.9.34'
-    def groovyVersion = '2.4.7'
+	providedCompile group: 'javax.servlet', name: 'servlet-api', version:'2.5'
+	compile 'com.google.appengine:appengine:+'
+	compile 'org.codehaus.groovy:groovy-all:2.4.12'
+	// Add your dependencies here.
 
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	compile group: 'org.apache.tika', name: 'tika-app', version: '1.15'
 
-    compile "com.google.appengine:appengine-api-1.0-sdk:$gaeVersion",
-            "com.google.appengine:appengine-api-labs:$gaeVersion"
+	//	compile 'org.apache.tika:tika-app:1.13'
+	//compile 'org.apache.commons:commons-lang3:3.3.2'
 
-    compile 'org.sitemesh:sitemesh:3.0-alpha-2'
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.3'
 
-    compile 'org.gaelyk:gaelyk:2.1.2'
-	
+	//compile 'commons-fileupload:commons-fileupload:1.3.1'
+	//compile 'commons-collections:commons-collections:3.2.1'
+
+	//compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
+
+	// http://mvnrepository.com/artifact/com.google.guava/guava
+	//compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+
 	compile 'org.twitter4j:twitter4j-core:4.0.4'
-	//compile 'org.jsoup:jsoup:1.7.3'
-    //compile 'org.jsoup:jsoup:1.8.3'
-	//compile 'org.jsoup:jsoup:1.9.2'
-	compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
-
-
-    testCompile 'org.gaelyk:gaelyk-spock:0.4'
-    testCompile "com.google.appengine:appengine-api-stubs:$gaeVersion",
-            "com.google.appengine:appengine-testing:$gaeVersion"
-
-   // functionalTestCompile 'org.seleniumhq.selenium:selenium-firefox-driver:2.40.0'
-   // functionalTestCompile 'org.gebish:geb-spock:0.9.2'
-
-    appengineSdk "com.google.appengine:appengine-java-sdk:$gaeVersion"
-
 }
+
+appengine {
+	// App Engine tasks configuration
+	run {
+		// local (dev_appserver) configuration (standard environments only)
+		port = 8081
+
+		jvmFlags = ["-Dappengine.fullscan.seconds=5"]  //hot reload?
+		//jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005']
+		logLevel = 1  // get message from println
+
+	}
+
+	stage { enableJarSplitting = true }
+
+
+	deploy {
+		// deploy configuration
+		stopPreviousVersion = true  // default - stop the current version
+		promote = true              // default - & make this the current version
+	}
+}
+
+task reloadApp(type: Copy) {
+	dependsOn war
+
+	project.afterEvaluate {
+		into project.tasks.explodeWar.explodedAppDirectory
+		with war
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.1'
+}
+
+group = 'com.example.appengine'   // Generated output GroupId
+version = '1.0-SNAPSHOT'          // Version in generated output
+
+sourceCompatibility = 1.8  // App Engine Standard uses Java 7
+targetCompatibility = 1.8  // App Engine Standard uses Java 7

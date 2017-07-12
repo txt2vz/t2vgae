@@ -8,7 +8,7 @@ function drawForce(json) {
 			.size([ width, height ]).on("tick", tick);	
 
 
-	var svg = d3.select("body").append("svg").attr("width", width).attr(
+	var svg = d3.select("#vis").append("svg").attr("width", width).attr(
 			"height", height);
 
 	var link = svg.selectAll(".link"), node = svg.selectAll(".node");
