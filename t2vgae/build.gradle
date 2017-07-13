@@ -27,7 +27,7 @@ dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.4.12'
 	// Add your dependencies here.
 
-	compile group: 'org.apache.tika', name: 'tika-app', version: '1.15'
+	compile group: 'org.apache.tika', name: 'tika-app', version: '1.16'
 
 	//	compile 'org.apache.tika:tika-app:1.13'
 	//compile 'org.apache.commons:commons-lang3:3.3.2'
@@ -38,6 +38,8 @@ dependencies {
 	//compile 'commons-collections:commons-collections:3.2.1'
 
 	//compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
+//	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
+	
 
 	// http://mvnrepository.com/artifact/com.google.guava/guava
 	//compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
@@ -49,7 +51,7 @@ appengine {
 	// App Engine tasks configuration
 	run {
 		// local (dev_appserver) configuration (standard environments only)
-		port = 8081
+		port = 8080
 
 		jvmFlags = ["-Dappengine.fullscan.seconds=5"]  //hot reload?
 		//jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005']
@@ -62,8 +64,10 @@ appengine {
 
 	deploy {
 		// deploy configuration
-		stopPreviousVersion = true  // default - stop the current version
-		promote = true              // default - & make this the current version
+		stopPreviousVersion = false  // default - stop the current version
+		promote = false              // default - & make this the current version
+		version = '27'
+		project = 'txt2vz'
 	}
 }
 

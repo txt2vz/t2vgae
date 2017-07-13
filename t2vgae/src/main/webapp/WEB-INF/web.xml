@@ -24,29 +24,29 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>texttojson</servlet-name>
+		<servlet-name>TextToJsonServlet</servlet-name>
 		<servlet-class>processText.TextToJSON</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>texttojson</servlet-name>
+		<servlet-name>TextToJsonServlet</servlet-name>
 		<url-pattern>/texttojsonservice</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>twitter</servlet-name>
+		<servlet-name>TwitterServlet</servlet-name>
 		<servlet-class>twitter.TwitterToJSON</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>twitter</servlet-name>
+		<servlet-name>TwitterServlet</servlet-name>
 		<url-pattern>/twittertojsonservice</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>url</servlet-name>
+		<servlet-name>UrlServlet</servlet-name>
 		<servlet-class>url.UrlToJSON</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>url</servlet-name>
+		<servlet-name>UrlServlet</servlet-name>
 		<url-pattern>/urlservice</url-pattern>
 	</servlet-mapping>
 

@@ -23,7 +23,7 @@ class GenerateWordLinks {
 	GenerateWordLinks() {
 	}
 	GenerateWordLinks(Map userParameters) {
-		println "in gwl params are $userParameters"
+		//println "in gwl params are $userParameters"
 		networkType = userParameters['networkType'][0];   
 		coocIn =   userParameters['cooc'][0] as Float
 		maxWordPairs =  userParameters['maxLinks'][0] as Integer

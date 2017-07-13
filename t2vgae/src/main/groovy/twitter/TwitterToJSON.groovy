@@ -26,6 +26,7 @@ class TwitterToJSON extends GroovyServlet{
 		query.setCount(40)
 		//GeoLocation sheffield = new GeoLocation(53.377127, -1.467705);
 		//query.setGeoCode(sheffield, distance, Query.KILOMETERS)
+		println "twitter query text $queryText"
 		QueryResult result = twitter.search(query);
 
 		int twCount = 0;

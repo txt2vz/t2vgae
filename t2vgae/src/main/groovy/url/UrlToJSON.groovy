@@ -1,10 +1,12 @@
 package url
 
-import groovy.servlet.GroovyServlet
 import javax.servlet.ServletConfig
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.apache.tika.Tika
+//import org.jsoup.Jsoup
+
+import groovy.servlet.GroovyServlet
 import processText.GenerateWordLinks
 
 class UrlToJSON extends GroovyServlet{
@@ -16,10 +18,10 @@ class UrlToJSON extends GroovyServlet{
 	void service(HttpServletRequest request, HttpServletResponse response) {
 
 		String urlText = request.getParameter("urlText");
-		
 		def url = urlText.toURL()
-		//text = Jsoup.parse(url.getText()).text()
-
+	
+	//	def extractedText = Jsoup.parse(url.getText()).text()		
+	
 		Tika tika = new Tika();
 		def extractedText = tika.parseToString(url)
 		
@@ -29,7 +31,7 @@ class UrlToJSON extends GroovyServlet{
 
 		GenerateWordLinks gw = new GenerateWordLinks(m);
 		def json = gw.getJSONnetwork(extractedText)
-		println "in UrlToJSON Json is $json"
+	//	println "in UrlToJSON Json is $json"
 
 		response.getWriter().println(json)
 	}
