@@ -205,7 +205,7 @@ function drawDendrogram(json) {
 		node.selectAll("text").remove();
 
 		// NodeID
-		node.append("text").attr("dy", ".35em").attr("text-anchor", "middle")
+		node.append("text").attr("dy", ".35em").attr("text-anchor", "right")
 				.text(function(d) {
 					return d.name;
 				});

@@ -44,14 +44,14 @@ class TwitterToJSON extends GroovyServlet{
 			query = result.nextQuery()
 			if (query == null) break;
 		}
-		System.out.println( "twCount : $twCount" )
+		
+		println( "twCount : $twCount" )
 		println "combined tweetText first 40" + combinedTweetText.take(40)
 		
-		def m = request.getParameterMap();
-
-		GenerateWordLinks gw = new GenerateWordLinks(m);
+		def m = request.getParameterMap()
+		GenerateWordLinks gw = new GenerateWordLinks(m)
 		def json = gw.getJSONnetwork(combinedTweetText)
-		println "in twitterTOJSON Json is $json"
+		//println "in twitterTOJSON Json is $json"
 
 		response.getWriter().println(json)
 	}	

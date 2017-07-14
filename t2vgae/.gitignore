@@ -11,6 +11,7 @@ TwitterKeys.groovy
 .gradletasknamecache
 .gradle/
 .gradle
+gradle.bat
 gradle.prefs
 build/
 bin/

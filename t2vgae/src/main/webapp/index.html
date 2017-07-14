@@ -67,6 +67,11 @@ html {
 	stroke: #ccc;
 	stroke-width: 1.5px;
 }
+
+.message {
+	white-space: nowrap;
+	color: blue;
+}
 </style>
 </head>
 <title>txt2vz</title>
@@ -112,11 +117,13 @@ html {
 						<div>Select File</div>
 						<input id="fileupload" type="file" name="files[]" multiple>
 					</div>
-
+					<div class="message">Drag local file and drop here (pdf,
+						docx, ppt etc.)</div>
 					<div id="modal">
 						<img id="loader" src="images/ajax-loaderBig.gif" />
 						<div id="fade"></div>
 					</div>
+
 				</div>
 
 				<div class="col-md-2">
@@ -177,14 +184,14 @@ html {
 	<script src="js/frontPage.js"></script>
 
 	<script type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.12.5/js/vendor/jquery.ui.widget.min.js"></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.18.0/js/vendor/jquery.ui.widget.min.js"></script>
 	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.12.5/js/jquery.fileupload.min.js"></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.18.0/js/jquery.fileupload.min.js"></script>
 
 	<script
 		src="https://rawgit.com/misoproject/d3.chart/master/d3.chart.min.js"></script>
 	<script src="js/d3.chart.layout.hierarchy.js">
-	
+		
 	</script>
 
 	<script>
@@ -193,7 +200,6 @@ html {
 		var maxWords = 50;
 		var oneLevel = true;
 		var networkType = "forceTree";
-	//	var jsonDataTemp;
 
 		frontPage();
 
@@ -243,7 +249,7 @@ html {
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if (keycode == '13') {
 				//console.log('You pressed a "enter" key in Twitter Q');
-				textToJSON(twitQ.value, true);
+				twitter(twitQ.value);//textToJSON(twitQ.value, true);
 			}
 			event.stopPropagation();
 		});
@@ -262,7 +268,7 @@ html {
 		//http://bl.ocks.org/bansaghi/f3cbb5e7b759b6a58aff
 		//radial zoomable collapsible
 		function radialZC(jsonText) {
-		//	console.log ("jsonText in radialZC " + jsonText);
+			//	console.log ("jsonText in radialZC " + jsonText);
 
 			var json = JSON.parse(jsonText);
 			{
@@ -317,10 +323,10 @@ html {
 					closeModal();
 					if (data.result.startsWith("#error"))
 						alert("error in file upload " + data.result);
-					else{
-						textToJSON(data.result);					
+					else {
+						textToJSON(data.result);
 						//console.log("dat is " + data.result);						
-						closeModal();
+						//closeModal();
 					}
 				},
 				progress : function(e, data) {
@@ -339,7 +345,7 @@ html {
 
 			jQuery.ajax({
 				type : "POST",
-				url :  "texttojsonservice",
+				url : "texttojsonservice",
 				cache : false,
 				data : {
 					text : text,
@@ -354,15 +360,15 @@ html {
 				},
 			});
 		};
-		
+
 		function urlToJSON(urlText) {
-			
+
 			setNetworkType();
 			openModal();
 
 			jQuery.ajax({
 				type : "POST",
-				url :  "urlservice",
+				url : "urlservice",
 				cache : false,
 				data : {
 					urlText : urlText,
@@ -378,7 +384,7 @@ html {
 				},
 			});
 		};
-		
+
 		function twitter(q) {
 			//q = q.replace(/%/g, '');
 			setNetworkType();
@@ -386,7 +392,7 @@ html {
 
 			jQuery.ajax({
 				type : "POST",
-				url :  "twittertojsonservice",
+				url : "twittertojsonservice",
 				cache : false,
 				data : {
 					q : q,
@@ -406,20 +412,20 @@ html {
 		closeModal();
 	</script>
 	<script>
-	(function(i, s, o, g, r, a, m) {
-		i['GoogleAnalyticsObject'] = r;
-		i[r] = i[r] || function() {
-			(i[r].q = i[r].q || []).push(arguments)
-		}, i[r].l = 1 * new Date();
-		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
-		a.async = 1;
-		a.src = g;
-		m.parentNode.insertBefore(a, m)
-	})(window, document, 'script',
-			'https://www.google-analytics.com/analytics.js', 'ga');
+		(function(i, s, o, g, r, a, m) {
+			i['GoogleAnalyticsObject'] = r;
+			i[r] = i[r] || function() {
+				(i[r].q = i[r].q || []).push(arguments)
+			}, i[r].l = 1 * new Date();
+			a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+			a.async = 1;
+			a.src = g;
+			m.parentNode.insertBefore(a, m)
+		})(window, document, 'script',
+				'https://www.google-analytics.com/analytics.js', 'ga');
 
-	ga('create', 'UA-37171770-2', 'auto');
-	ga('send', 'pageview');
+		ga('create', 'UA-37171770-2', 'auto');
+		ga('send', 'pageview');
 	</script>
 </body>
 </html>
