@@ -100,10 +100,9 @@ class GenerateWordLinks {
 		if (networkType == "forceNet")
 			json= getJSONgraph(wordPairList, stemInfo)		
 		else
-			json = getJSONtree(wordPairList, stemInfo)
-			
+			json = getJSONtree(wordPairList, stemInfo)			
 
-		println "json is $json"
+		//println "json is $json"
 		return json
 	}
 
@@ -201,7 +200,7 @@ class GenerateWordLinks {
 		return coocVal ?: 0.0;
 	}
 
-	//powers for 0.9 - I thought using power function very expensive - maybe not so much of an issue?
+	//powers for 0.9 - power function could be expensive
 	def final powers = [
 		0 : 1,
 		1 : 0.9,
