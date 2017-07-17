@@ -24,14 +24,11 @@ class UrlToJSON extends GroovyServlet{
 	
 		Tika tika = new Tika();
 		def extractedText = tika.parseToString(url)
-		
-	//	println "URLto JSON extracted text from url $extractedText"
 	
 		def m = request.getParameterMap();
 
 		GenerateWordLinks gw = new GenerateWordLinks(m);
 		def json = gw.getJSONnetwork(extractedText)
-	//	println "in UrlToJSON Json is $json"
 
 		response.getWriter().println(json)
 	}

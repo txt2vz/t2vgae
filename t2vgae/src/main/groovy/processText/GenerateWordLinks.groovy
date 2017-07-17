@@ -7,25 +7,24 @@ class GenerateWordLinks {
 
 	private int highFreqWords = 80
 	private int maxWordPairs = 40
-	private float coocIn = 0.5
+	private float powerValue = 0.5
 	private String networkType = "tree"
 
 	GenerateWordLinks(String netType, Float cin, int maxL, int hfq) {
 		networkType = netType
-		this.coocIn = cin
+		this.powerValue = cin
 		this.maxWordPairs=maxL
 		this.highFreqWords=hfq
 
-		println "**GenerateWordLinks constructor - cocoIn: $coocIn maxWordPairs: $maxWordPairs highFreqWords: $highFreqWords "
-		//getJSONnetwork (s)
+		println "**GenerateWordLinks constructor - cocoIn: $powerValue maxWordPairs: $maxWordPairs highFreqWords: $highFreqWords "	
 	}
 
 	GenerateWordLinks() {
 	}
-	GenerateWordLinks(Map userParameters) {
-		//println "in gwl params are $userParameters"
+	
+	GenerateWordLinks(Map userParameters) {	
 		networkType = userParameters['networkType'][0];   
-		coocIn =   userParameters['cooc'][0] as Float
+		powerValue =   userParameters['cooc'][0] as Float
 		maxWordPairs =  userParameters['maxLinks'][0] as Integer
 		highFreqWords =  userParameters['maxWords'][0] as Integer
 
@@ -92,11 +91,7 @@ class GenerateWordLinks {
 
 		//wordPairList = wordPairList.sort { -it.cooc }
 		wordPairList = wordPairList.sort { -it.sortVal }
-		println "wordPairList take 5: " + wordPairList.take(30)
-
-		//	wordPairList.each{
-		//		println " ${it.word0} ${it.word1} ${it.cooc}  ${it.sortVal}   "
-		//	}
+		println "wordPairList take 5: " + wordPairList.take(30)	
 
 		wordPairList = wordPairList.take(maxWordPairs)
 		//def json = getJSONgraph(wordPairList, stemInfo)
@@ -135,8 +130,7 @@ class GenerateWordLinks {
 	private def internalNodes = [] as Set
 	private def allNodes = [] as Set
 	private String getJSONtree( List wl, Map stemMap){
-		def tree= [:]
-
+		def tree= [:] 
 
 		wl.collect {
 			def word0 =    stemMap[it.word0].max { it.value }.key
@@ -201,7 +195,7 @@ class GenerateWordLinks {
 					//lookup table should be faster
 					//powers[it]
 					//Math.pow(0.5, it)
-					Math.pow(coocIn, it)
+					Math.pow(powerValue, it)
 				}
 
 		return coocVal ?: 0.0;

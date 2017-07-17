@@ -17,7 +17,7 @@ repositories {
 	mavenCentral()
 }
 
-//apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 apply plugin: 'groovy'
 apply plugin: 'war'                               // standard Web Archive plugin
 apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
@@ -72,10 +72,10 @@ task wrapper(type: Wrapper) {
 	gradleVersion = '4.1'
 }
 
-//gretty {
-	//contextPath="/"
+gretty {
+	contextPath="/"
 	//httpPort = 8081
-//}
+}
 
 group = 'com.example.appengine'   // Generated output GroupId
 version = '1.0-SNAPSHOT'          // Version in generated output

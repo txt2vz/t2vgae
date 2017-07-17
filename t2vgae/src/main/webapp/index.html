@@ -72,6 +72,13 @@ html {
 	white-space: nowrap;
 	color: blue;
 }
+
+#hint {
+	color: magenta; 
+	font-style : italic;
+	font-weight: bold;
+	font-style: italic;
+}
 </style>
 </head>
 <title>txt2vz</title>
@@ -96,7 +103,7 @@ html {
 					<br> <input type="button" value="viz text"
 						class="btn btn-primary" onclick="textToJSON(txta1.value)">
 				</div>
-				<div class="col-md-5">
+				<div class="col-md-4">
 					<div>
 						<div>Enter Twitter query or hashtag :</div>
 						<input type="text" name="twitQ" id="twitQ" size=40
@@ -112,13 +119,7 @@ html {
 					<button onclick="urlToJSON(url.value)" class="btn btn-primary">viz
 						URL</button>
 					<br> <br>
-					<div class="btn btn-info fileinput-button">
-						<i class="icon-plus icon-white"></i>
-						<div>Select File</div>
-						<input id="fileupload" type="file" name="files[]" multiple>
-					</div>
-					<div class="message">Drag local file and drop here (pdf,
-						docx, ppt etc.)</div>
+
 					<div id="modal">
 						<img id="loader" src="images/ajax-loaderBig.gif" />
 						<div id="fade"></div>
@@ -126,18 +127,25 @@ html {
 
 				</div>
 
-				<div class="col-md-2">
-					<br> Network Type:
-					<form id="networkType">
-						<input type="radio" id="radial" name="nt" value="radial"
-							checked="true"> Radial (tree)<br /> <input type="radio"
-							id="forceTree" name="nt" value="forceTree"> Force (tree)
-						<br /> <input type="radio" id="forceNet" name="nt"
-							value="forceNet"> Force (network) <br /> <input
-							type="radio" id="dendro" name="nt" value="dendro">
-						Dendrogram (tree)<br />
+				<div class="col-md-3">
+					<div class="btn btn-info fileinput-button">
+						<i class="icon-plus icon-white"></i>
+						<div>Select File</div>
+						<input id="fileupload" type="file" name="files[]" multiple>
+					</div>
+					<div class="message">Drag local file and drop here (pdf,
+						docx, ppt etc.)</div>
 
-					</form>
+					<br> Network Type: <select id="networkType">
+						<option value="radial">Radial</option>
+						<option value="dendro">Dendrogram</option>
+						<option value="forceTree">Force(tree)</option>
+						<option value="forceNet">Force (network)</option>
+					</select> <br /> <br />
+					<div id="hint">
+						Mouse wheel to zoom. <br /> Hold click and move mouse to move
+						tree
+					</div>
 				</div>
 
 				<div class="col-md-2 controls">
@@ -179,7 +187,6 @@ html {
 	<script src="js/drawDendrogram.js"></script>
 	<script src="js/drawLinks.js"></script>
 	<script src="js/drawRadial.js"></script>
-
 	<script src="js/colorbrewer.js"></script>
 	<script src="js/frontPage.js"></script>
 
@@ -187,19 +194,15 @@ html {
 		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.18.0/js/vendor/jquery.ui.widget.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.18.0/js/jquery.fileupload.min.js"></script>
-
 	<script
 		src="https://rawgit.com/misoproject/d3.chart/master/d3.chart.min.js"></script>
-	<script src="js/d3.chart.layout.hierarchy.js">
-		
-	</script>
+	<script src="js/d3.chart.layout.hierarchy.js"></script>
 
 	<script>
 		var cooc = 0.5;
 		var maxLinks = 30;
 		var maxWords = 50;
 		var oneLevel = true;
-		var networkType = "forceTree";
 
 		frontPage();
 
@@ -298,20 +301,36 @@ html {
 			var j = JSON.parse(jsonData);
 			//console.log("j.name " + j.name);
 
-			if (networkType == "forceNet")
+			if ($("#networkType").val() == "forceNet")
 				drawLinks(jsonData);
-			else if (networkType == "forceTree")
+			else if ($("#networkType").val() == "forceTree")
 				drawForce(jsonData);
-			else if (networkType == "radial")
+			else if ($("#networkType").val() == "radial")
 				radialZC(jsonData);
 			else
-				drawDendrogram(jsonData);
+				drawDendrogram(jsonData)
 		};
 
-		function setNetworkType() {
-			networkType = jQuery('input[name=nt]:checked', '#networkType')
-					.val();
-		};
+		$(document)
+				.ready(
+						function() {
+							$("#hint").show();
+
+							$("select#networkType")
+									.on(
+											'change',
+											function() {
+
+												if (($("#networkType").val() == "radial")
+														|| ($("#networkType")
+																.val() == "dendro")) {
+													$("#hint").show();
+												} else {
+													$("#hint").hide();
+												}
+												;
+											});
+						});
 
 		$(function() {
 
@@ -340,7 +359,7 @@ html {
 
 		function textToJSON(text) {
 			text = text.replace(/%/g, '');
-			setNetworkType();
+			console.log("in texttojson net.val " + $("#networkType").val());
 			openModal();
 
 			jQuery.ajax({
@@ -349,7 +368,7 @@ html {
 				cache : false,
 				data : {
 					text : text,
-					networkType : networkType,
+					networkType : $("#networkType").val(),
 					cooc : cooc,
 					maxLinks : maxLinks,
 					maxWords : maxWords
@@ -363,7 +382,6 @@ html {
 
 		function urlToJSON(urlText) {
 
-			setNetworkType();
 			openModal();
 
 			jQuery.ajax({
@@ -372,7 +390,7 @@ html {
 				cache : false,
 				data : {
 					urlText : urlText,
-					networkType : networkType,
+					networkType : $("#networkType").val(),
 					cooc : cooc,
 					maxLinks : maxLinks,
 					maxWords : maxWords
@@ -386,8 +404,7 @@ html {
 		};
 
 		function twitter(q) {
-			//q = q.replace(/%/g, '');
-			setNetworkType();
+			//q = q.replace(/%/g, '');	
 			openModal();
 
 			jQuery.ajax({
@@ -396,7 +413,7 @@ html {
 				cache : false,
 				data : {
 					q : q,
-					networkType : networkType,
+					networkType : $("#networkType").val(),
 					cooc : cooc,
 					maxLinks : maxLinks,
 					maxWords : maxWords
