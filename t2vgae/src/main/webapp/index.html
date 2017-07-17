@@ -103,10 +103,10 @@ html {
 					<br> <input type="button" value="viz text"
 						class="btn btn-primary" onclick="textToJSON(txta1.value)">
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<div>
 						<div>Enter Twitter query or hashtag :</div>
-						<input type="text" name="twitQ" id="twitQ" size=40
+						<input type="text" name="twitQ" id="twitQ" size=38
 							value="word cloud"> <input type="button"
 							class="btn btn-primary" value="viz Twitter"
 							onclick="twitter(twitQ.value)">
@@ -114,7 +114,7 @@ html {
 
 					<div>Enter URL:</div>
 					<input type="text" id="url"
-						value="https://en.wikipedia.org/wiki/Tag_cloud" size=40>
+						value="https://en.wikipedia.org/wiki/Tag_cloud" size=38>
 
 					<button onclick="urlToJSON(url.value)" class="btn btn-primary">viz
 						URL</button>
@@ -128,20 +128,22 @@ html {
 				</div>
 
 				<div class="col-md-3">
-					<div class="btn btn-info fileinput-button">
-						<i class="icon-plus icon-white"></i>
-						<div>Select File</div>
-						<input id="fileupload" type="file" name="files[]" multiple>
-					</div>
-					<div class="message">Drag local file and drop here (pdf,
-						docx, ppt etc.)</div>
-
+				
 					<br> Network Type: <select id="networkType">
 						<option value="radial">Radial</option>
 						<option value="dendro">Dendrogram</option>
 						<option value="forceTree">Force(tree)</option>
 						<option value="forceNet">Force (network)</option>
 					</select> <br /> <br />
+					
+					<div class="btn btn-info fileinput-button">
+						<i class="icon-plus icon-white"></i>
+						<div>Drag and drop file here (pdf,docx,ppt etc.)</div>
+						<input id="fileupload" type="file" name="files[]" multiple>
+					</div>
+					<br /> <br />	
+
+				
 					<div id="hint">
 						Mouse wheel to zoom. <br /> Hold click and move mouse to move
 						tree
