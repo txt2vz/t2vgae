@@ -6,7 +6,7 @@ import spock.lang.*
 
 class WordLinksSpec extends spock.lang.Specification {
 
-	def "word links produced correctly short"() {
+	def "word links produced correctly short "() {
 		given:
 		def gwl = new GenerateWordLinks()		
 		JsonSlurper slurper = new JsonSlurper()
